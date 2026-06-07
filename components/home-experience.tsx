@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 
 import type { Article } from "@/lib/content";
-import type { CategoryConfig } from "@/lib/site";
+import { siteConfig, type CategoryConfig } from "@/lib/site";
 import type { ResourceItem } from "@/data/resources";
 import { ArticleCard } from "@/components/article-card";
 import { ResourceCard } from "@/components/resource-card";
@@ -38,13 +38,13 @@ const quickPaths = [
 const modules = [
   {
     key: "routes",
-    title: "新手路线图",
+    title: "登船指南",
     description: "先定场景，再选账号和支付，不要反过来先堆工具。",
     icon: Compass,
   },
   {
     key: "plans",
-    title: "订阅与价格",
+    title: "支付补给",
     description: "把真实月成本、礼品卡折扣和长期维护成本一起看。",
     icon: CreditCard,
   },
@@ -141,15 +141,15 @@ export function HomeExperience({
                 <Sparkles className="h-3.5 w-3.5 text-accent" />
                 订阅 · 支付 · 工具避坑
               </span>
-              <span className="action-pill">Spaceship 风格重构版</span>
+              <span className="action-pill">路格舶 · 舶海日志</span>
             </div>
 
             <div>
               <h1 className="max-w-3xl text-[clamp(2rem,5vw,4.1rem)] font-semibold tracking-tight text-foreground">
-                寻未知路；格世界物；舶四海途。
+                {siteConfig.motto}
               </h1>
               <p className="mt-3 max-w-2xl text-base leading-8 text-muted md:text-lg">
-                路格舶把订阅、支付、Apple ID 与开发工具信息压成一个更短、更快、更容易检索的入口。
+                {siteConfig.logline} 路格舶把 AI 出海、支付、Apple ID 与开发工具信息压成一个更短、更快、更容易检索的入口。
               </p>
             </div>
 
@@ -188,7 +188,7 @@ export function HomeExperience({
           <div className="glass-card border-white/10 bg-white/[0.03] p-5">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="section-kicker">快速导航</p>
+                <p className="section-kicker">快速航路</p>
                 <h2 className="mt-2 text-2xl font-semibold tracking-tight text-foreground">
                   先选你现在最急的事
                 </h2>
@@ -330,7 +330,7 @@ export function HomeExperience({
               <div>
                 <p className="section-kicker">折叠模块</p>
                 <h3 className="mt-1 text-xl font-semibold tracking-tight text-foreground">
-                  新手路线图
+                  登船指南
                 </h3>
               </div>
               <ChevronDown className="h-4 w-4 text-muted transition-transform group-open:rotate-180" />
@@ -351,7 +351,7 @@ export function HomeExperience({
                 ))}
               </div>
               <Link href="/start" className="mt-4 inline-flex text-sm font-medium text-accent">
-                查看完整开始页
+                查看完整登船指南
               </Link>
             </div>
           </details>
@@ -361,7 +361,7 @@ export function HomeExperience({
               <div>
                 <p className="section-kicker">折叠模块</p>
                 <h3 className="mt-1 text-xl font-semibold tracking-tight text-foreground">
-                  联系与订阅入口
+                  补给与订阅入口
                 </h3>
               </div>
               <ChevronDown className="h-4 w-4 text-muted transition-transform group-open:rotate-180" />
@@ -383,7 +383,7 @@ export function HomeExperience({
       <section className="glass-card-strong p-5 md:p-6">
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
-            <p className="section-kicker">更多分类</p>
+            <p className="section-kicker">更多航路</p>
             <h2 className="section-title mt-2">剩余内容先收短，再按需展开</h2>
           </div>
           <Link href="/category" className="button-secondary w-fit">

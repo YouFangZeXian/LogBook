@@ -104,7 +104,7 @@ export default async function CategoryDetailPage({ params }: CategoryPageProps) 
               href="/start"
               className="mt-4 inline-flex text-sm font-medium text-accent hover:text-accent-strong"
             >
-              去看新手路线图
+              去看登船指南
             </Link>
           </div>
         </aside>

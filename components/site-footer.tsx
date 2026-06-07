@@ -12,7 +12,7 @@ export function SiteFooter() {
               路格舶
             </p>
             <h2 className="mt-2 text-2xl font-semibold tracking-tight text-foreground">
-              舶来四海之物，也把订阅、支付与工具路径收成一册。
+              记录 AI 时代的舶海日志，也把订阅、支付与工具路径收成一册。
             </h2>
           </div>
           <p className="max-w-2xl text-sm leading-7 text-muted">

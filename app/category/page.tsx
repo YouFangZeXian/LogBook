@@ -25,12 +25,12 @@ export default function CategoryIndexPage() {
   return (
     <div className="page-shell py-10 md:py-14">
       <div className="max-w-3xl">
-        <span className="eyebrow">分类导航</span>
+        <span className="eyebrow">分类航路</span>
         <h1 className="mt-5 text-4xl font-semibold tracking-tight text-foreground">
           先按你遇到的问题找入口
         </h1>
         <p className="mt-4 text-base leading-8 text-muted">
-          这个站不是泛 AI 工具导航，而是围绕订阅、支付、账号和学生低成本方案来做内容整理。
+          这个站不是泛 AI 工具导航，而是把 AI 出海过程拆成几条更清晰的航路，方便你按问题定位。
         </p>
       </div>
 

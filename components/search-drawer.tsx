@@ -58,7 +58,7 @@ export function SearchDrawer({ entries, open, onClose }: SearchDrawerProps) {
               autoFocus
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              placeholder="搜索文章、分类、工具或路线图"
+              placeholder="搜索文章、分类、工具或航路"
               className="w-full bg-transparent text-[15px] text-foreground outline-none placeholder:text-muted"
             />
             <button

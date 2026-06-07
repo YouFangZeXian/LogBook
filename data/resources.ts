@@ -61,7 +61,7 @@ export const resourceItems: ResourceItem[] = [
     affiliateLink: "",
   },
   {
-    name: "新手路线图",
+    name: "登船指南",
     category: "tutorial",
     purpose: "按步骤理解工具、账号、支付和风险问题。",
     audience: "完全从 0 开始的读者。",

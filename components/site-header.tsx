@@ -33,7 +33,7 @@ export function SiteHeader({ onOpenSearch }: SiteHeaderProps) {
               className="flex w-full items-center gap-3 rounded-full border border-line bg-white/6 px-4 py-3 text-left text-sm text-muted transition-colors hover:border-line-strong hover:text-foreground"
             >
               <Search className="h-4 w-4 text-accent" />
-              搜索文章、分类、工具或路线图
+              搜索文章、分类、工具或航路
             </button>
           </div>
 
@@ -59,10 +59,10 @@ export function SiteHeader({ onOpenSearch }: SiteHeaderProps) {
               <Search className="h-4 w-4" />
             </button>
             <Link href="/start" className="button-primary hidden md:inline-flex">
-              新手入口
+              登船指南
             </Link>
             <Link href="/category" className="button-secondary hidden sm:inline-flex xl:hidden">
-              导航
+              航路
             </Link>
           </div>
         </div>

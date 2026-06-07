@@ -45,12 +45,12 @@ export default function StartPage() {
   return (
     <div className="page-shell space-y-8 py-10 md:py-14">
       <section className="card p-6 md:p-8">
-        <span className="eyebrow">新手开始</span>
+        <span className="eyebrow">登船指南</span>
         <h1 className="mt-5 text-4xl font-semibold tracking-tight text-foreground">
           第一次使用海外 AI 工具，从这里开始
         </h1>
         <p className="mt-4 max-w-3xl text-base leading-8 text-muted">
-          这个页面适合完全从 0 开始的读者。目标不是一次性把所有账号、支付和订阅都开好，而是先做对第一步。
+          这是路格舶给第一次舶海使用 AI 工具的人准备的登船指南。目标不是一次性把所有账号、支付和订阅都开好，而是先做对第一步。
         </p>
       </section>
 
@@ -67,7 +67,7 @@ export default function StartPage() {
               href={step.href}
               className="inline-flex rounded-full border border-line bg-white px-5 py-3 text-sm font-medium text-foreground transition-colors hover:border-accent hover:text-accent"
             >
-              查看对应内容
+              查看对应航路
             </Link>
           </article>
         ))}

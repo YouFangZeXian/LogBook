@@ -237,9 +237,9 @@ export function getSearchEntries(): SearchEntry[] {
     {
       type: "page",
       title: "第一次使用海外 AI 工具，从这里开始",
-      description: "新手路线图，按步骤理解工具、账号、支付和风险。",
+      description: "登船指南，按步骤理解工具、账号、支付和风险。",
       href: "/start",
-      keywords: ["新手", "路线图", "开始"],
+      keywords: ["新手", "路线图", "登船指南", "开始"],
     },
     {
       type: "page",
