@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Search } from "lucide-react";
 
@@ -12,9 +13,16 @@ export function SiteHeader({ onOpenSearch }: SiteHeaderProps) {
     <header className="sticky top-0 z-40 border-b border-white/8 bg-slate-950/55 backdrop-blur-2xl">
       <div className="page-shell py-4">
         <div className="glass-card flex items-center justify-between gap-3 px-4 py-3">
-          <Link href="/" className="flex items-center gap-3">
-            <span className="flex h-10 w-10 items-center justify-center rounded-2xl border border-line bg-white/8 text-sm font-semibold text-foreground">
-              舶
+          <Link href="/" className="group flex items-center gap-3" aria-label="返回路格舶首页">
+            <span className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-2xl border border-line bg-white/6 shadow-[0_0_24px_rgba(83,140,255,0.18)] transition-transform duration-200 group-hover:scale-[1.04]">
+              <Image
+                src="/logo-mark.png"
+                alt="路格舶 logo"
+                width={40}
+                height={40}
+                className="h-full w-full object-cover"
+                priority
+              />
             </span>
             <div className="flex flex-col">
               <span className="text-[11px] font-medium uppercase tracking-[0.24em] text-accent">

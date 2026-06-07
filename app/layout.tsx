@@ -27,6 +27,14 @@ export const metadata: Metadata = {
     description: siteConfig.description,
     path: "/",
   }),
+  icons: {
+    icon: [
+      { url: "/favicon-64.png", sizes: "64x64", type: "image/png" },
+      { url: "/logo-mark.png", sizes: "192x192", type: "image/png" },
+    ],
+    shortcut: "/favicon-64.png",
+    apple: "/apple-touch-icon.png",
+  },
 };
 
 export default function RootLayout({
