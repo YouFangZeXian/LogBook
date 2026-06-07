@@ -3,8 +3,8 @@ import { Noto_Sans_SC, Noto_Serif_SC } from "next/font/google";
 
 import "./globals.css";
 
-import { SiteFooter } from "@/components/site-footer";
-import { SiteHeader } from "@/components/site-header";
+import { SiteShell } from "@/components/site-shell";
+import { getSearchEntries } from "@/lib/content";
 import { buildMetadata, siteConfig } from "@/lib/site";
 
 const notoSansSC = Noto_Sans_SC({
@@ -34,17 +34,15 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const searchEntries = getSearchEntries();
+
   return (
     <html
       lang="zh-CN"
       className={`${notoSansSC.variable} ${notoSerifSC.variable}`}
     >
       <body className="min-h-screen bg-background text-foreground">
-        <div className="flex min-h-screen flex-col">
-          <SiteHeader />
-          <main className="flex-1">{children}</main>
-          <SiteFooter />
-        </div>
+        <SiteShell searchEntries={searchEntries}>{children}</SiteShell>
       </body>
     </html>
   );

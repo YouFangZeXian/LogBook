@@ -1,9 +1,9 @@
 import Link from "next/link";
 
-import { buildMetadata } from "@/lib/site";
+import { buildMetadata, siteConfig } from "@/lib/site";
 
 export const metadata = buildMetadata({
-  title: "第一次使用海外 AI 工具，从这里开始 | AI 出海生存指南",
+  title: `第一次使用海外 AI 工具，从这里开始 | ${siteConfig.shortName}`,
   description: "按步骤理解工具选择、账号准备、支付方式、风险识别和低成本长期使用路径。",
   path: "/start",
 });

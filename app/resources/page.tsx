@@ -1,9 +1,9 @@
 import { ResourceCard } from "@/components/resource-card";
 import { resourceItems } from "@/data/resources";
-import { buildMetadata } from "@/lib/site";
+import { buildMetadata, siteConfig } from "@/lib/site";
 
 export const metadata = buildMetadata({
-  title: "资源页 | AI 出海生存指南",
+  title: `资源页 | ${siteConfig.shortName}`,
   description: "集中整理推荐工具、支付方案和教程卡片，并预留 affiliate link 字段。",
   path: "/resources",
 });

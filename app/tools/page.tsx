@@ -1,10 +1,10 @@
-import { buildMetadata } from "@/lib/site";
+import { buildMetadata, siteConfig } from "@/lib/site";
 import { SubscriptionCostCalculator } from "@/components/tools/subscription-cost-calculator";
 import { GiftCardCalculator } from "@/components/tools/gift-card-calculator";
 import { PlanComparisonTable } from "@/components/tools/plan-comparison";
 
 export const metadata = buildMetadata({
-  title: "工具页 | AI 出海生存指南",
+  title: `工具页 | ${siteConfig.shortName}`,
   description: "提供 AI 订阅成本计算器、Apple Gift Card 折扣计算器和订阅方案对比表。",
   path: "/tools",
 });

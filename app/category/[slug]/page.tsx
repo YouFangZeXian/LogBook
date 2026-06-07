@@ -2,7 +2,13 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { ArticleCard } from "@/components/article-card";
-import { buildMetadata, categoryMap, categories, type CategorySlug } from "@/lib/site";
+import {
+  buildMetadata,
+  categoryMap,
+  categories,
+  siteConfig,
+  type CategorySlug,
+} from "@/lib/site";
 import { getArticlesByCategory, getRecommendedArticles } from "@/lib/content";
 
 type CategoryPageProps = {
@@ -24,7 +30,7 @@ export async function generateMetadata({ params }: CategoryPageProps) {
   }
 
   return buildMetadata({
-    title: `${category.name} | AI 出海生存指南`,
+    title: `${category.name} | ${siteConfig.shortName}`,
     description: category.description,
     path: `/category/${category.slug}`,
   });

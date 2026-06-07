@@ -47,7 +47,7 @@ export function articleJsonLd(article: ArticleStructuredData) {
       name: siteConfig.name,
     },
     mainEntityOfPage: absoluteUrl(`/articles/${article.slug}`),
-    articleSection: "AI 出海",
+    articleSection: "订阅、支付与工具指南",
     keywords: article.tags.join(", "),
     inLanguage: "zh-CN",
   };

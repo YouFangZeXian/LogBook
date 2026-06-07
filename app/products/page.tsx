@@ -1,8 +1,8 @@
 import { productItems } from "@/data/products";
-import { buildMetadata } from "@/lib/site";
+import { buildMetadata, siteConfig } from "@/lib/site";
 
 export const metadata = buildMetadata({
-  title: "产品页 | AI 出海生存指南",
+  title: `产品页 | ${siteConfig.shortName}`,
   description: "展示即将上线的数字产品占位，不接支付，只保留说明与联系方式。",
   path: "/products",
 });

@@ -13,7 +13,7 @@ import {
   renderArticle,
 } from "@/lib/content";
 import { articleJsonLd } from "@/lib/structured-data";
-import { buildMetadata, categoryMap } from "@/lib/site";
+import { buildMetadata, categoryMap, siteConfig } from "@/lib/site";
 import { formatDate } from "@/lib/utils";
 
 type ArticlePageProps = {
@@ -35,7 +35,7 @@ export async function generateMetadata({ params }: ArticlePageProps) {
   }
 
   return buildMetadata({
-    title: `${article.title} | AI 出海生存指南`,
+    title: `${article.title} | ${siteConfig.shortName}`,
     description: article.description,
     path: `/articles/${article.slug}`,
     keywords: article.tags,

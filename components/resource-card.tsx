@@ -4,13 +4,14 @@ import type { ResourceItem } from "@/data/resources";
 
 type ResourceCardProps = {
   item: ResourceItem;
+  compact?: boolean;
 };
 
-export function ResourceCard({ item }: ResourceCardProps) {
+export function ResourceCard({ item, compact = false }: ResourceCardProps) {
   return (
-    <article className="card flex h-full flex-col gap-4 p-6">
+    <article className="glass-card flex h-full flex-col gap-4 p-5">
       <div className="flex items-center justify-between gap-3">
-        <span className="rounded-full bg-soft px-3 py-1 text-xs font-medium text-accent">
+        <span className="rounded-full bg-accent-soft px-3 py-1 text-xs font-medium text-accent">
           {item.category === "tool"
             ? "工具"
             : item.category === "payment"
@@ -22,7 +23,11 @@ export function ResourceCard({ item }: ResourceCardProps) {
         </span>
       </div>
       <div>
-        <h3 className="text-xl font-semibold tracking-tight text-foreground">
+        <h3
+          className={`font-semibold tracking-tight text-foreground ${
+            compact ? "text-lg" : "text-xl"
+          }`}
+        >
           {item.name}
         </h3>
         <p className="mt-3 text-sm leading-7 text-muted">{item.purpose}</p>

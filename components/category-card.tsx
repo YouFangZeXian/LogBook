@@ -12,7 +12,7 @@ export function CategoryCard({ category, icon: Icon }: CategoryCardProps) {
   return (
     <Link
       href={`/category/${category.slug}`}
-      className="card group flex h-full flex-col gap-4 p-5 transition-transform hover:-translate-y-0.5"
+      className="glass-card group flex h-full flex-col gap-4 p-5 transition-transform hover:-translate-y-0.5"
     >
       <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-accent-soft text-accent">
         <Icon className="h-5 w-5" />

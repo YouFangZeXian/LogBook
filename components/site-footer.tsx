@@ -4,15 +4,15 @@ import { siteConfig } from "@/lib/site";
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-line/80 bg-white/80">
+    <footer className="border-t border-white/8 bg-slate-950/40">
       <div className="page-shell grid gap-8 py-10 md:grid-cols-[1.2fr_0.8fr]">
         <div className="space-y-4">
           <div>
             <p className="text-sm font-semibold tracking-[0.2em] text-accent uppercase">
-              AI 出海生存指南
+              路格舶
             </p>
             <h2 className="mt-2 text-2xl font-semibold tracking-tight text-foreground">
-              帮你少踩坑、少花冤枉钱，先把路走顺。
+              舶来四海之物，也把订阅、支付与工具路径收成一册。
             </h2>
           </div>
           <p className="max-w-2xl text-sm leading-7 text-muted">

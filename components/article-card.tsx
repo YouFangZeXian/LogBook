@@ -4,18 +4,23 @@ import type { Article } from "@/lib/content";
 
 type ArticleCardProps = {
   article: Article;
+  compact?: boolean;
 };
 
-export function ArticleCard({ article }: ArticleCardProps) {
+export function ArticleCard({ article, compact = false }: ArticleCardProps) {
   return (
-    <article className="card h-full p-6 transition-transform hover:-translate-y-0.5">
+    <article className="glass-card h-full p-5 transition-transform hover:-translate-y-0.5">
       <div className="flex flex-wrap items-center gap-3 text-xs text-muted">
-        <span className="rounded-full bg-soft px-3 py-1 font-medium text-accent">
+        <span className="rounded-full bg-accent-soft px-3 py-1 font-medium text-accent">
           {article.categoryName}
         </span>
         <span>{article.readingTime}</span>
       </div>
-      <h3 className="mt-4 text-xl font-semibold tracking-tight text-foreground">
+      <h3
+        className={`mt-4 font-semibold tracking-tight text-foreground ${
+          compact ? "text-lg" : "text-xl"
+        }`}
+      >
         <Link href={`/articles/${article.slug}`} className="hover:text-accent">
           {article.title}
         </Link>

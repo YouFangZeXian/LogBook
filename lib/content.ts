@@ -43,6 +43,14 @@ export type Article = ArticleFrontmatter & {
   toc: TocItem[];
 };
 
+export type SearchEntry = {
+  type: "article" | "category" | "resource" | "page";
+  title: string;
+  description: string;
+  href: string;
+  keywords: string[];
+};
+
 function getArticleSlugs() {
   return fs
     .readdirSync(articlesDirectory)
@@ -206,4 +214,48 @@ export function getAllCategoryStats() {
     ...category,
     count: articles.filter((article) => article.category === category.slug).length,
   }));
+}
+
+export function getSearchEntries(): SearchEntry[] {
+  const articleEntries = getAllArticles().map((article) => ({
+    type: "article" as const,
+    title: article.title,
+    description: article.description,
+    href: `/articles/${article.slug}`,
+    keywords: [article.categoryName, ...article.tags],
+  }));
+
+  const categoryEntries = Object.values(categoryMap).map((category) => ({
+    type: "category" as const,
+    title: category.name,
+    description: category.description,
+    href: `/category/${category.slug}`,
+    keywords: [category.shortName],
+  }));
+
+  const pageEntries: SearchEntry[] = [
+    {
+      type: "page",
+      title: "第一次使用海外 AI 工具，从这里开始",
+      description: "新手路线图，按步骤理解工具、账号、支付和风险。",
+      href: "/start",
+      keywords: ["新手", "路线图", "开始"],
+    },
+    {
+      type: "page",
+      title: "工具页",
+      description: "订阅成本计算器、礼品卡折扣计算器和方案对比。",
+      href: "/tools",
+      keywords: ["计算器", "对比", "工具"],
+    },
+    {
+      type: "page",
+      title: "资源页",
+      description: "推荐工具、支付方案和教程入口。",
+      href: "/resources",
+      keywords: ["资源", "推荐", "支付"],
+    },
+  ];
+
+  return [...articleEntries, ...categoryEntries, ...pageEntries];
 }

@@ -1,11 +1,11 @@
 import { BanknoteArrowUp, Bot, CircleAlert, CreditCard, GraduationCap, IdCard } from "lucide-react";
 
-import { buildMetadata } from "@/lib/site";
+import { buildMetadata, siteConfig } from "@/lib/site";
 import { CategoryCard } from "@/components/category-card";
 import { getAllCategoryStats } from "@/lib/content";
 
 export const metadata = buildMetadata({
-  title: "分类导航 | AI 出海生存指南",
+  title: `分类导航 | ${siteConfig.shortName}`,
   description: "按 AI 订阅、海外支付、美区 Apple ID、开发工具、学生方案和常见避坑来找内容。",
   path: "/category",
 });

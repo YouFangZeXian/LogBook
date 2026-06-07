@@ -20,16 +20,16 @@ export type CategoryConfig = {
 const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL ??
   process.env.SITE_URL ??
-  "https://ai-overseas-survival-guide.pages.dev";
+  "https://logbook.today";
 
 export const siteConfig = {
-  name: "AI 出海生存指南",
-  shortName: "AI 出海指南",
-  title: "中国学生和个人开发者的 AI 出海生存指南",
+  name: "路格舶-舶来四海之物",
+  shortName: "路格舶",
+  title: "路格舶-舶来四海之物 | 订阅、支付与工具避坑",
   description:
     "ChatGPT、Claude、Cursor、美区 Apple ID、海外支付、订阅避坑，一站式整理，帮学生和个人开发者少踩坑、少花冤枉钱。",
   url: siteUrl,
-  author: "AI 出海生存指南",
+  author: "路格舶",
   email: "hello@example.com",
   wechatPlaceholder: "微信联系位（待补充）",
   keywords: [

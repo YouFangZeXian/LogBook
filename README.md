@@ -1,4 +1,4 @@
-# AI 出海生存指南
+# 路格舶-舶来四海之物
 
 一个面向中国学生和个人开发者的中文内容站，聚焦 AI 订阅、海外支付、美区 Apple ID、AI 开发工具、学生低成本方案和常见避坑信息。
 
@@ -100,7 +100,7 @@ NEXT_PUBLIC_SITE_URL=https://你的正式域名
 如果没有配置这个环境变量，项目会默认使用：
 
 ```bash
-https://ai-overseas-survival-guide.pages.dev
+https://logbook.today
 ```
 
 ### 方式二：本地构建后手动上传
@@ -309,4 +309,3 @@ NEXT_PUBLIC_SITE_URL=https://你的正式域名
 - 增加联盟链接管理
 - 增加产品表单收集页
 - 增加内容搜索
-

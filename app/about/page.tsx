@@ -1,7 +1,7 @@
-import { buildMetadata } from "@/lib/site";
+import { buildMetadata, siteConfig } from "@/lib/site";
 
 export const metadata = buildMetadata({
-  title: "关于本站 | AI 出海生存指南",
+  title: `关于本站 | ${siteConfig.shortName}`,
   description: "说明网站定位、服务边界和内容原则。",
   path: "/about",
 });
