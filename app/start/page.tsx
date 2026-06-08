@@ -1,5 +1,6 @@
 import { CompassRose, Path, Sparkle } from "@phosphor-icons/react/dist/ssr";
 
+import { DeviceDock } from "@/components/device-dock";
 import { VoyagePlanner } from "@/components/voyage-planner";
 import { buildMetadata, siteConfig } from "@/lib/site";
 
@@ -53,6 +54,7 @@ export default function StartPage() {
       </section>
 
       <VoyagePlanner mode="full" />
+      <DeviceDock />
     </div>
   );
 }

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 
 import type { SearchEntry } from "@/lib/content";
+import { AuthDialog } from "@/components/auth-dialog";
 import { SearchDrawer } from "@/components/search-drawer";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
@@ -29,6 +30,7 @@ export function SiteShell({ children, searchEntries }: SiteShellProps) {
         open={searchOpen}
         onClose={() => setSearchOpen(false)}
       />
+      <AuthDialog />
       <div className="flex min-h-screen flex-col">
         <SiteHeader onOpenSearch={() => setSearchOpen(true)} />
         <main className="flex-1">{children}</main>

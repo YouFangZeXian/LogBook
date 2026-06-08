@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 
 import { ArticleCard } from "@/components/article-card";
 import { ArticleToc } from "@/components/article-toc";
+import { ContributionPanel } from "@/components/contribution-panel";
 import { ResourceCard } from "@/components/resource-card";
 import { resourceItems } from "@/data/resources";
 import {
@@ -112,6 +113,24 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                   </span>
                 ))}
               </div>
+              <div className="mt-6 grid gap-3 rounded-[0.95rem] border border-line bg-background/62 p-4 text-sm md:grid-cols-4">
+                <div>
+                  <p className="text-xs text-muted">关联航线</p>
+                  <p className="mt-1 font-medium text-foreground">{article.route}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted">适用设备</p>
+                  <p className="mt-1 font-medium text-foreground">{article.deviceType?.join(" / ")}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted">难度</p>
+                  <p className="mt-1 font-medium text-foreground">{article.difficulty}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted">预计操作</p>
+                  <p className="mt-1 font-medium text-foreground">{article.estimatedTime}</p>
+                </div>
+              </div>
             </header>
 
             <div className="card mt-8 p-6 md:p-8">
@@ -166,6 +185,8 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                   ))}
                 </div>
               </div>
+
+              <ContributionPanel articleTitle={article.title} articleSlug={article.slug} />
 
               <div className="card grid gap-5 p-6 md:grid-cols-[1.1fr_0.9fr] md:p-8">
                 <div>

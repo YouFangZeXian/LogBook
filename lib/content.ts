@@ -32,6 +32,11 @@ export type ArticleFrontmatter = {
   category: CategorySlug;
   tags: string[];
   featured?: boolean;
+  deviceType?: string[];
+  relatedTools?: string[];
+  difficulty?: string;
+  estimatedTime?: string;
+  route?: string;
 };
 
 export type Article = ArticleFrontmatter & {
@@ -109,9 +114,28 @@ function parseArticle(slug: string): Article {
   const { data, content } = matter(fileContents);
   const stats = readingTime(content);
   const frontmatter = data as ArticleFrontmatter;
+  const relatedTools =
+    frontmatter.relatedTools ??
+    frontmatter.tags.filter((tag) =>
+      /ChatGPT|Claude|Cursor|Codex|Apple|Gift|Perplexity|Gemini/i.test(tag),
+    );
+  const deviceType =
+    frontmatter.deviceType ??
+    (frontmatter.category === "apple-id"
+      ? ["iPhone / iPad", "Mac"]
+      : frontmatter.category === "dev-tools"
+        ? ["Windows", "Mac"]
+        : frontmatter.category === "payment"
+          ? ["iPhone / iPad", "Windows", "Mac"]
+          : ["Windows", "Mac", "iPhone / iPad", "Android"]);
 
   return {
     ...frontmatter,
+    deviceType,
+    relatedTools,
+    difficulty: frontmatter.difficulty ?? "入门",
+    estimatedTime: frontmatter.estimatedTime ?? `${Math.max(8, Math.round(stats.minutes * 4))} 分钟`,
+    route: frontmatter.route ?? categoryMap[frontmatter.category].shortName,
     slug,
     content,
     excerpt: frontmatter.description,
@@ -254,6 +278,34 @@ export function getSearchEntries(): SearchEntry[] {
       description: "推荐工具、支付方案和教程入口。",
       href: "/resources",
       keywords: ["资源", "推荐", "支付"],
+    },
+    {
+      type: "page",
+      title: "航线推荐页",
+      description: "根据设备和当前状态生成推荐航线。",
+      href: "/routes",
+      keywords: ["航线", "推荐", "设备", "进度"],
+    },
+    {
+      type: "page",
+      title: "新大陆",
+      description: "新 AI 工具、免费额度、新玩法和支线入口。",
+      href: "/discoveries",
+      keywords: ["新工具", "新大陆", "AI 音乐", "AI 视频"],
+    },
+    {
+      type: "page",
+      title: "投稿与勘误",
+      description: "提交投稿、补充、纠错和问题反馈。",
+      href: "/contribute",
+      keywords: ["投稿", "勘误", "纠错", "反馈"],
+    },
+    {
+      type: "page",
+      title: "船员档案",
+      description: "查看航海里程、投稿数量和船员身份。",
+      href: "/crew",
+      keywords: ["船员", "航海里程", "身份"],
     },
   ];
 

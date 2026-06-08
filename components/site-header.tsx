@@ -1,7 +1,11 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { List, MagnifyingGlass } from "@phosphor-icons/react/dist/ssr";
 
+import { getCurrentLogbookUser, requestLogbookLogin } from "@/components/auth-dialog";
 import { siteConfig } from "@/lib/site";
 
 type SiteHeaderProps = {
@@ -10,6 +14,23 @@ type SiteHeaderProps = {
 
 export function SiteHeader({ onOpenSearch }: SiteHeaderProps) {
   const primaryNav = siteConfig.navigation.slice(0, 5);
+  const [userName, setUserName] = useState("");
+
+  useEffect(() => {
+    const sync = () => {
+      setUserName(getCurrentLogbookUser()?.name ?? "");
+    };
+
+    sync();
+    window.addEventListener("logbook-auth-changed", sync);
+
+    return () => window.removeEventListener("logbook-auth-changed", sync);
+  }, []);
+
+  const logout = () => {
+    window.localStorage.removeItem("logbook.auth.user");
+    window.dispatchEvent(new Event("logbook-auth-changed"));
+  };
 
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-background/92 backdrop-blur-md">
@@ -80,6 +101,24 @@ export function SiteHeader({ onOpenSearch }: SiteHeaderProps) {
               <MagnifyingGlass size={16} className="mr-2" />
               搜索
             </button>
+            {userName ? (
+              <button
+                type="button"
+                onClick={logout}
+                className="button-secondary max-w-40 truncate"
+                title="退出本地船员身份"
+              >
+                {userName}
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => requestLogbookLogin()}
+                className="button-secondary"
+              >
+                登录
+              </button>
+            )}
             <Link href="/start" className="button-primary">
               登船指南
             </Link>

@@ -162,6 +162,20 @@ summary::-webkit-details-marker {
   display: none;
 }
 
+@keyframes sail {
+  0% {
+    transform: translateX(0) translateY(0);
+  }
+
+  45% {
+    transform: translateX(210px) translateY(-3px);
+  }
+
+  100% {
+    transform: translateX(420px) translateY(0);
+  }
+}
+
 .prose-rich {
   @apply prose max-w-none text-[15px] leading-8 text-foreground;
   --tw-prose-headings: var(--foreground);
