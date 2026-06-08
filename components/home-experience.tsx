@@ -76,7 +76,7 @@ const routePanels = [
     description: "支付与充值都退到支线，不占主甲板。",
     href: "/category/payment",
     tone:
-      "linear-gradient(180deg, rgba(231,236,191,0.88) 0%, rgba(219,194,204,0.82) 55%, rgba(121,148,212,0.84) 100%)",
+      "radial-gradient(circle at 82% 18%, rgba(132, 164, 225, 0.26), transparent 28%), linear-gradient(180deg, rgba(255,255,255,0.72) 0%, rgba(247,242,233,0.92) 100%)",
     variant: "small" as const,
   },
   {
@@ -84,7 +84,7 @@ const routePanels = [
     description: "工具只留高频入口，不在首页开工具超市。",
     href: "/category/dev-tools",
     tone:
-      "linear-gradient(180deg, rgba(229,176,205,0.86) 0%, rgba(194,169,214,0.82) 52%, rgba(133,196,173,0.82) 100%)",
+      "radial-gradient(circle at 18% 20%, rgba(232, 197, 168, 0.28), transparent 26%), linear-gradient(180deg, rgba(255,255,255,0.74) 0%, rgba(244,238,228,0.94) 100%)",
     variant: "small" as const,
   },
   {
@@ -303,10 +303,10 @@ export function HomeExperience({
                 </div>
               </Link>
 
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
                 <Link
                   href={paymentResource.href}
-                  className="flex min-h-[10rem] flex-col justify-between rounded-[1rem] border border-line bg-transparent p-5 transition-colors hover:border-foreground"
+                  className="flex min-h-[9.25rem] flex-col justify-between rounded-[1rem] border border-line bg-transparent p-5 transition-colors hover:border-foreground hover:bg-white/24"
                 >
                   <div className="flex items-center justify-between gap-3">
                     <span className="text-[11px] uppercase tracking-[0.24em] text-muted [font-family:var(--font-mono),monospace]">
@@ -315,7 +315,7 @@ export function HomeExperience({
                     <Wallet size={16} className="text-foreground" />
                   </div>
                   <div>
-                    <p className="text-xl font-semibold tracking-tight text-foreground">
+                    <p className="text-lg font-semibold tracking-tight text-foreground">
                       {paymentResource.name}
                     </p>
                     <p className="mt-2 text-sm leading-7 text-muted">{paymentResource.risk}</p>
@@ -324,7 +324,7 @@ export function HomeExperience({
 
                 <Link
                   href={dockResource.href}
-                  className="flex min-h-[10rem] flex-col justify-between rounded-[1rem] border border-line bg-transparent p-5 transition-colors hover:border-foreground"
+                  className="flex min-h-[9.25rem] flex-col justify-between rounded-[1rem] border border-line bg-transparent p-5 transition-colors hover:border-foreground hover:bg-white/24"
                 >
                   <div className="flex items-center justify-between gap-3">
                     <span className="text-[11px] uppercase tracking-[0.24em] text-muted [font-family:var(--font-mono),monospace]">
@@ -333,7 +333,7 @@ export function HomeExperience({
                     <Screwdriver size={16} className="text-foreground" />
                   </div>
                   <div>
-                    <p className="text-xl font-semibold tracking-tight text-foreground">
+                    <p className="text-lg font-semibold tracking-tight text-foreground">
                       {dockResource.name}
                     </p>
                     <p className="mt-2 text-sm leading-7 text-muted">{dockResource.purpose}</p>
@@ -386,8 +386,8 @@ export function HomeExperience({
                     panel.variant === "large"
                       ? "max-w-xs text-[clamp(2.6rem,4vw,4rem)] font-semibold"
                       : panel.variant === "plain"
-                        ? "max-w-sm text-3xl font-semibold text-foreground"
-                        : "max-w-xs text-[clamp(1.7rem,2.6vw,2.3rem)] font-semibold",
+                        ? "max-w-sm text-[2.2rem] font-semibold text-foreground"
+                        : "max-w-xs text-[clamp(1.5rem,2.2vw,2rem)] font-semibold",
                   ].join(" ")}
                 >
                   {panel.title}
