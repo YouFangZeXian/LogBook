@@ -106,15 +106,15 @@ select {
 }
 
 .glass-card {
-  @apply rounded-[28px] border border-line bg-card shadow-[0_20px_48px_-36px_rgba(18,18,18,0.22)];
+  @apply rounded-[16px] border border-line bg-card shadow-[0_20px_48px_-40px_rgba(18,18,18,0.16)];
 }
 
 .glass-card-strong {
-  @apply rounded-[32px] border border-line-strong bg-card-strong shadow-[0_28px_62px_-40px_rgba(18,18,18,0.18)];
+  @apply rounded-[18px] border border-line-strong bg-card-strong shadow-[0_24px_54px_-42px_rgba(18,18,18,0.16)];
 }
 
 .card {
-  @apply rounded-[28px] border border-line bg-card shadow-[0_20px_48px_-36px_rgba(18,18,18,0.22)];
+  @apply rounded-[16px] border border-line bg-card shadow-[0_20px_48px_-40px_rgba(18,18,18,0.16)];
 }
 
 .eyebrow {
@@ -124,6 +124,7 @@ select {
 
 .section-title {
   @apply text-[clamp(1.4rem,2.2vw,2rem)] font-semibold tracking-tight text-foreground;
+  text-wrap: balance;
 }
 
 .section-kicker {
