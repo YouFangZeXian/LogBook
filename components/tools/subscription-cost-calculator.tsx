@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { BrandMark } from "@/components/brand-mark";
 
 export function SubscriptionCostCalculator() {
   const [usdPrice, setUsdPrice] = useState("20");
@@ -24,6 +25,7 @@ export function SubscriptionCostCalculator() {
   return (
     <section className="card p-6">
       <div className="space-y-2">
+        <BrandMark brand="chatgpt" size="sm" />
         <h2 className="text-2xl font-semibold tracking-tight text-foreground">
           AI 订阅成本计算器
         </h2>
@@ -65,19 +67,19 @@ export function SubscriptionCostCalculator() {
       </div>
 
       <div className="mt-6 grid gap-4 md:grid-cols-3">
-        <div className="rounded-2xl bg-soft p-4">
+        <div className="rounded-2xl border border-line bg-soft p-4">
           <p className="text-sm text-muted">基础人民币成本</p>
           <p className="mt-2 text-2xl font-semibold text-foreground">
             ¥{result.base.toFixed(2)}
           </p>
         </div>
-        <div className="rounded-2xl bg-accent-soft p-4">
+        <div className="rounded-2xl border border-amber-200/70 bg-amber-50/70 p-4">
           <p className="text-sm text-muted">手续费金额</p>
           <p className="mt-2 text-2xl font-semibold text-foreground">
             ¥{result.feeAmount.toFixed(2)}
           </p>
         </div>
-        <div className="rounded-2xl bg-success-soft p-4">
+        <div className="rounded-2xl border border-emerald-200/70 bg-emerald-50/70 p-4">
           <p className="text-sm text-muted">最终月成本</p>
           <p className="mt-2 text-2xl font-semibold text-foreground">
             ¥{result.total.toFixed(2)}

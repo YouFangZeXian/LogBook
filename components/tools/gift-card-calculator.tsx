@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { BrandMark } from "@/components/brand-mark";
 
 export function GiftCardCalculator() {
   const [faceValue, setFaceValue] = useState("100");
@@ -21,6 +22,7 @@ export function GiftCardCalculator() {
   return (
     <section className="card p-6">
       <div className="space-y-2">
+        <BrandMark brand="apple-gift-card" size="sm" />
         <h2 className="text-2xl font-semibold tracking-tight text-foreground">
           Apple Gift Card 折扣计算器
         </h2>
@@ -51,13 +53,13 @@ export function GiftCardCalculator() {
       </div>
 
       <div className="mt-6 grid gap-4 md:grid-cols-2">
-        <div className="rounded-2xl bg-soft p-4">
+        <div className="rounded-2xl border border-line bg-soft p-4">
           <p className="text-sm text-muted">折扣</p>
           <p className="mt-2 text-2xl font-semibold text-foreground">
             {result.discount.toFixed(2)} 折
           </p>
         </div>
-        <div className="rounded-2xl bg-success-soft p-4">
+        <div className="rounded-2xl border border-emerald-200/70 bg-emerald-50/70 p-4">
           <p className="text-sm text-muted">节省金额</p>
           <p className="mt-2 text-2xl font-semibold text-foreground">
             ¥{result.saved.toFixed(2)}
