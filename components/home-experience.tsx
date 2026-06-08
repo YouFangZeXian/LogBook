@@ -1,25 +1,21 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import Link from "next/link";
 import { gsap } from "gsap";
 import {
   ArrowRight,
-  ChevronDown,
-  ChevronRight,
+  ArrowUpRight,
   Compass,
   CreditCard,
-  Layers3,
   Search,
   ShieldCheck,
-  Sparkles,
+  Wrench,
 } from "lucide-react";
 
 import type { Article } from "@/lib/content";
 import { siteConfig, type CategoryConfig } from "@/lib/site";
 import type { ResourceItem } from "@/data/resources";
-import { ArticleCard } from "@/components/article-card";
-import { ResourceCard } from "@/components/resource-card";
 
 type HomeExperienceProps = {
   latestArticles: Article[];
@@ -28,31 +24,72 @@ type HomeExperienceProps = {
   resources: ResourceItem[];
 };
 
-const quickPaths = [
-  { label: "先看 ChatGPT Plus", href: "/articles/chatgpt-plus-subscription-options" },
-  { label: "先看支付方式", href: "/category/payment" },
-  { label: "学生低成本方案", href: "/category/student" },
-  { label: "避坑总入口", href: "/category/risk" },
+const journeySteps = [
+  {
+    id: "01",
+    label: "主线",
+    title: "先定目的",
+    body: "先回答你是为了学习、写作、开发，还是先跑通第一个可用账号。出发前先选方向。",
+    href: "/start",
+  },
+  {
+    id: "02",
+    label: "主线",
+    title: "再过账号",
+    body: "Apple 路线、网页订阅路线、先用免费组合路线，入口不同，后面的成本和风险也不同。",
+    href: "/category/apple-id",
+  },
+  {
+    id: "03",
+    label: "支线 A",
+    title: "处理支付",
+    body: "礼品卡、虚拟卡、香港卡不是平替关系，而是对应不同使用场景的补给方式。",
+    href: "/category/payment",
+  },
+  {
+    id: "04",
+    label: "主线",
+    title: "接入工具",
+    body: "只先把一到两个高频工具接进工作流，别把首页看到的所有名字都一次性买完。",
+    href: "/category/dev-tools",
+  },
+  {
+    id: "05",
+    label: "支线 B",
+    title: "长期方案",
+    body: "确认它真的会长期用，再决定续费节奏、低成本组合和更稳的支付方式。",
+    href: "/category/student",
+  },
 ];
 
-const modules = [
+const routePanels = [
   {
-    key: "routes",
-    title: "登船指南",
-    description: "先定场景，再选账号和支付，不要反过来先堆工具。",
-    icon: Compass,
+    title: "航路总图",
+    description: "按顺序判断，别被资讯淹没。",
+    href: "/start",
+    tone:
+      "linear-gradient(180deg, rgba(255,225,178,0.92) 0%, rgba(240,176,126,0.92) 56%, rgba(102,148,234,0.9) 100%)",
   },
   {
-    key: "plans",
-    title: "支付补给",
-    description: "把真实月成本、礼品卡折扣和长期维护成本一起看。",
-    icon: CreditCard,
+    title: "补给站",
+    description: "支付方式只在需要时展开。",
+    href: "/category/payment",
+    tone:
+      "linear-gradient(180deg, rgba(226,232,179,0.9) 0%, rgba(212,184,198,0.88) 55%, rgba(80,132,226,0.94) 100%)",
   },
   {
-    key: "risk",
-    title: "风险与边界",
-    description: "只保留合规做法，灰产路径和夸张承诺直接排除。",
-    icon: ShieldCheck,
+    title: "船坞",
+    description: "工具不是越多越好，是越顺越好。",
+    href: "/category/dev-tools",
+    tone:
+      "linear-gradient(180deg, rgba(229,154,195,0.9) 0%, rgba(194,144,201,0.88) 48%, rgba(103,201,154,0.9) 100%)",
+  },
+  {
+    title: "航海日志",
+    description: "把踩坑、复盘和更新留给后续阅读。",
+    href: "/articles/build-ai-workflow-from-zero",
+    tone:
+      "linear-gradient(180deg, rgba(157,197,240,0.88) 0%, rgba(220,195,181,0.9) 58%, rgba(239,223,114,0.94) 100%)",
   },
 ];
 
@@ -63,10 +100,23 @@ export function HomeExperience({
   resources,
 }: HomeExperienceProps) {
   const heroRef = useRef<HTMLDivElement>(null);
-  const glowRef = useRef<HTMLDivElement>(null);
-  const cardsRef = useRef<HTMLDivElement>(null);
-  const [openPanel, setOpenPanel] = useState<"guides" | "resources" | "updates">(
-    "guides",
+  const mapRef = useRef<HTMLDivElement>(null);
+  const archiveRef = useRef<HTMLDivElement>(null);
+
+  const primaryArticle = featuredArticles[0] ?? latestArticles[0];
+  const secondaryArticle = featuredArticles[1] ?? latestArticles[1] ?? primaryArticle;
+  const paymentResource =
+    resources.find((item) => item.category === "payment") ?? resources[0];
+  const dockResource =
+    resources.find((item) => item.category === "tool") ?? resources[1] ?? resources[0];
+
+  const categorySummary = useMemo(
+    () =>
+      categories
+        .slice()
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 4),
+    [categories],
   );
 
   const openSearch = () => {
@@ -78,328 +128,322 @@ export function HomeExperience({
   useEffect(() => {
     const media = gsap.matchMedia();
 
-    media.add(
-      {
-        reduceMotion: "(prefers-reduced-motion: reduce)",
-        desktop: "(min-width: 768px)",
-      },
-      (context) => {
-        const { reduceMotion } = context.conditions as {
-          reduceMotion: boolean;
-          desktop: boolean;
-        };
+    media.add("(prefers-reduced-motion: no-preference)", () => {
+      if (heroRef.current) {
+        gsap.from(heroRef.current.querySelectorAll("[data-hero-item]"), {
+          opacity: 0.72,
+          y: 18,
+          stagger: 0.08,
+          duration: 0.72,
+          ease: "power2.out",
+        });
+      }
 
-        if (!reduceMotion) {
-          if (glowRef.current) {
-            gsap.to(glowRef.current, {
-              scale: 1.05,
-              opacity: 0.82,
-              duration: 2.8,
-              repeat: -1,
-              yoyo: true,
-              ease: "sine.inOut",
-            });
-          }
+      if (mapRef.current) {
+        gsap.from(mapRef.current.children, {
+          opacity: 0.82,
+          y: 18,
+          stagger: 0.08,
+          duration: 0.68,
+          ease: "power2.out",
+          delay: 0.12,
+        });
+      }
 
-          if (heroRef.current) {
-            gsap.from(heroRef.current, {
-              y: 16,
-              opacity: 0.84,
-              duration: 0.9,
-              ease: "power2.out",
-            });
-          }
-
-          if (cardsRef.current) {
-            gsap.from(cardsRef.current.children, {
-              y: 18,
-              opacity: 0.82,
-              duration: 0.75,
-              stagger: 0.05,
-              ease: "power2.out",
-              delay: 0.08,
-            });
-          }
-        }
-
-        return () => {
-          gsap.killTweensOf([glowRef.current, heroRef.current, cardsRef.current]);
-        };
-      },
-    );
+      if (archiveRef.current) {
+        gsap.from(archiveRef.current.children, {
+          opacity: 0.84,
+          y: 14,
+          stagger: 0.05,
+          duration: 0.62,
+          ease: "power2.out",
+          delay: 0.18,
+        });
+      }
+    });
 
     return () => media.revert();
   }, []);
 
   return (
-    <div className="page-shell space-y-8 py-8 md:space-y-10 md:py-10">
-      <section className="glass-card-strong overflow-hidden">
-        <div className="grid gap-8 px-5 py-6 md:grid-cols-[1.2fr_0.8fr] md:px-8 md:py-8">
-          <div ref={heroRef} className="relative space-y-5">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="action-pill">
-                <Sparkles className="h-3.5 w-3.5 text-accent" />
-                订阅 · 支付 · 工具避坑
-              </span>
-              <span className="action-pill">路格舶 · 舶海日志</span>
+    <div className="page-shell space-y-14 py-8 md:space-y-[4.5rem] md:py-10">
+      <section className="space-y-8 border-b border-line pb-10 md:space-y-10">
+        <div className="hide-scrollbar flex gap-3 overflow-x-auto pb-2 lg:hidden">
+          {journeySteps.map((step) => (
+            <Link
+              key={step.id}
+              href={step.href}
+              className="min-w-[15rem] shrink-0 rounded-[1.7rem] border border-line bg-white/45 px-4 py-4"
+            >
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-[11px] uppercase tracking-[0.24em] text-muted [font-family:var(--font-mono),monospace]">
+                  {step.id}
+                </span>
+                <span className="text-[10px] uppercase tracking-[0.22em] text-muted [font-family:var(--font-mono),monospace]">
+                  {step.label}
+                </span>
+              </div>
+              <p className="mt-4 text-base font-semibold text-foreground">{step.title}</p>
+              <p className="mt-2 text-sm leading-7 text-muted">{step.body}</p>
+            </Link>
+          ))}
+        </div>
+
+        <div className="grid gap-10 lg:grid-cols-[17rem_minmax(0,1fr)] lg:gap-16">
+          <aside className="hidden lg:block">
+            <div className="sticky top-28">
+              <div className="border-b border-line pb-3">
+                <p className="eyebrow">航海主线</p>
+              </div>
+
+              <ol className="mt-6 space-y-5">
+                {journeySteps.map((step, index) => (
+                  <li key={step.id} className="relative pl-10">
+                    {index < journeySteps.length - 1 ? (
+                      <span className="absolute left-[11px] top-7 h-[calc(100%+0.75rem)] w-px bg-black/15" />
+                    ) : null}
+                    <span className="absolute left-0 top-1 flex h-[22px] w-[22px] items-center justify-center rounded-full border border-foreground bg-background text-[10px] text-foreground [font-family:var(--font-mono),monospace]">
+                      {step.id}
+                    </span>
+
+                    <div className="space-y-1.5">
+                      <div className="flex items-center gap-2">
+                        <p className="text-base font-semibold text-foreground">{step.title}</p>
+                        <span className="text-[10px] uppercase tracking-[0.22em] text-muted [font-family:var(--font-mono),monospace]">
+                          {step.label}
+                        </span>
+                      </div>
+                      <p className="text-sm leading-7 text-muted">{step.body}</p>
+                      <Link
+                        href={step.href}
+                        className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.22em] text-foreground [font-family:var(--font-mono),monospace] hover:text-accent"
+                      >
+                        进入此站
+                        <ArrowUpRight className="h-3.5 w-3.5" />
+                      </Link>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          </aside>
+
+          <div ref={heroRef} className="space-y-8">
+            <div
+              data-hero-item
+              className="flex flex-col gap-4 border-b border-line pb-5 md:flex-row md:items-start md:justify-between"
+            >
+              <div className="max-w-md space-y-2">
+                <p className="text-[11px] uppercase tracking-[0.26em] text-muted [font-family:var(--font-mono),monospace]">
+                  {siteConfig.logline}
+                </p>
+                <p className="text-sm leading-7 text-muted">
+                  不把资讯一股脑推到你面前，而是把顺序、风险和补给点拆成一条能走的航路。
+                </p>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-3">
+                <button type="button" onClick={openSearch} className="button-secondary">
+                  <Search className="mr-2 h-4 w-4" />
+                  搜索航路
+                </button>
+                <Link href="/start" className="button-primary">
+                  先走主线
+                </Link>
+              </div>
             </div>
 
-            <div>
-              <h1 className="max-w-3xl text-[clamp(2rem,5vw,4.1rem)] font-semibold tracking-tight text-foreground">
-                {siteConfig.motto}
+            <div data-hero-item className="space-y-5">
+              <h1 className="max-w-5xl font-serif text-[clamp(3.3rem,8vw,7rem)] leading-[0.96] tracking-[-0.05em] text-foreground">
+                寻未知路；格世界物；
+                <br />
+                舶沧海途。
               </h1>
-              <p className="mt-3 max-w-2xl text-base leading-8 text-muted md:text-lg">
-                {siteConfig.logline} 路格舶把 AI 出海、支付、Apple ID 与开发工具信息压成一个更短、更快、更容易检索的入口。
+              <p className="max-w-2xl text-lg leading-9 text-muted">
+                路格舶更像一份航海总图。先告诉你该从哪里起步，再把支付、工具和长期方案放进该出现的位置。
               </p>
             </div>
 
-            <button
-              type="button"
-              onClick={openSearch}
-              className="glass-card relative block w-full overflow-hidden border-white/10 bg-white/[0.05] p-2 text-left"
+            <div
+              data-hero-item
+              className="grid gap-4 lg:grid-cols-[minmax(0,1.35fr)_minmax(17rem,0.85fr)]"
             >
-              <div
-                ref={glowRef}
-                className="pointer-events-none absolute inset-y-1 left-1/3 w-24 rounded-full bg-accent/30 blur-2xl"
-              />
-              <div className="relative flex items-center gap-3 rounded-[22px] border border-white/8 bg-slate-950/55 px-4 py-4">
-                <Search className="h-4 w-4 text-accent" />
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm text-foreground">
-                    搜索文章、分类、礼品卡、Cursor、Apple ID…
+              <Link
+                href={`/articles/${primaryArticle.slug}`}
+                className="flex min-h-[22rem] flex-col justify-between rounded-[2.1rem] border border-line-strong bg-white/48 p-6 transition-colors hover:border-foreground"
+              >
+                <div className="flex items-center justify-between gap-4">
+                  <span className="text-[11px] uppercase tracking-[0.26em] text-muted [font-family:var(--font-mono),monospace]">
+                    当前主线
+                  </span>
+                  <Compass className="h-4 w-4 text-foreground" />
+                </div>
+
+                <div className="space-y-4">
+                  <h2 className="max-w-2xl text-[clamp(1.9rem,3vw,3rem)] font-semibold tracking-[-0.04em] text-foreground">
+                    {primaryArticle.title}
+                  </h2>
+                  <p className="max-w-xl text-sm leading-8 text-muted">
+                    {primaryArticle.description}
                   </p>
                 </div>
-                <span className="rounded-full border border-white/10 bg-white/6 px-3 py-1 text-[11px] uppercase tracking-[0.2em] text-muted">
-                  /
-                </span>
-              </div>
-            </button>
 
-            <div className="flex flex-wrap gap-2">
-              {quickPaths.map((item) => (
-                <Link key={item.href} href={item.href} className="action-pill">
-                  {item.label}
-                  <ChevronRight className="h-3.5 w-3.5" />
+                <div className="flex items-center gap-4 text-[11px] uppercase tracking-[0.22em] text-muted [font-family:var(--font-mono),monospace]">
+                  <span>{primaryArticle.categoryName}</span>
+                  <span>{primaryArticle.readingTime}</span>
+                </div>
+              </Link>
+
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
+                <Link
+                  href={paymentResource.href}
+                  className="flex min-h-[10.2rem] flex-col justify-between rounded-[1.8rem] border border-line bg-transparent p-5 transition-colors hover:border-foreground"
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-[11px] uppercase tracking-[0.24em] text-muted [font-family:var(--font-mono),monospace]">
+                      补给站
+                    </span>
+                    <CreditCard className="h-4 w-4 text-foreground" />
+                  </div>
+                  <div>
+                    <p className="text-xl font-semibold tracking-tight text-foreground">
+                      {paymentResource.name}
+                    </p>
+                    <p className="mt-2 text-sm leading-7 text-muted">{paymentResource.risk}</p>
+                  </div>
+                </Link>
+
+                <Link
+                  href={dockResource.href}
+                  className="flex min-h-[10.2rem] flex-col justify-between rounded-[1.8rem] border border-line bg-transparent p-5 transition-colors hover:border-foreground"
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-[11px] uppercase tracking-[0.24em] text-muted [font-family:var(--font-mono),monospace]">
+                      船坞
+                    </span>
+                    <Wrench className="h-4 w-4 text-foreground" />
+                  </div>
+                  <div>
+                    <p className="text-xl font-semibold tracking-tight text-foreground">
+                      {dockResource.name}
+                    </p>
+                    <p className="mt-2 text-sm leading-7 text-muted">{dockResource.purpose}</p>
+                  </div>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="space-y-6">
+        <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p className="section-kicker">有收有放的入口</p>
+            <h2 className="section-title mt-3">先把入口排好，再决定哪些内容值得展开</h2>
+          </div>
+          <p className="max-w-md text-sm leading-7 text-muted">
+            这些不是并列推荐，而是不同站点。你可以从主线进入，也可以在需要时拐进支付、工具和日志。
+          </p>
+        </div>
+
+        <div ref={mapRef} className="grid gap-4 md:grid-cols-2">
+          {routePanels.map((panel) => (
+            <Link
+              key={panel.title}
+              href={panel.href}
+              className="group relative flex min-h-[18rem] flex-col justify-between overflow-hidden rounded-[2rem] border border-black/10 p-6 text-black transition-transform duration-200 hover:-translate-y-0.5"
+              style={{ backgroundImage: panel.tone }}
+            >
+              <span className="text-[11px] uppercase tracking-[0.26em] text-black/72 [font-family:var(--font-mono),monospace]">
+                路格舶
+              </span>
+
+              <div className="space-y-3">
+                <h3 className="max-w-xs text-[clamp(2rem,3.2vw,3.2rem)] font-semibold tracking-[-0.05em]">
+                  {panel.title}
+                </h3>
+                <p className="max-w-sm text-sm leading-7 text-black/72">{panel.description}</p>
+              </div>
+
+              <ArrowUpRight className="absolute bottom-6 right-6 h-6 w-6 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section
+        ref={archiveRef}
+        className="grid gap-8 border-t border-line pt-8 lg:grid-cols-[0.9fr_1.1fr]"
+      >
+        <div className="space-y-5">
+          <div className="space-y-3">
+            <p className="section-kicker">档案与支线</p>
+            <h2 className="section-title">资讯继续保留，但退后一步成为档案层</h2>
+            <p className="max-w-md text-sm leading-8 text-muted">
+              你需要的资讯还在，只是不再抢占首页主叙事。主线看顺序，支线按需翻。
+            </p>
+          </div>
+
+          <div className="grid gap-2 text-sm">
+            {categorySummary.map((category) => (
+              <Link
+                key={category.slug}
+                href={`/category/${category.slug}`}
+                className="flex items-center justify-between border-b border-line py-3 text-muted transition-colors hover:text-foreground"
+              >
+                <span>{category.name}</span>
+                <span className="text-[11px] uppercase tracking-[0.22em] [font-family:var(--font-mono),monospace]">
+                  {category.count} 篇
+                </span>
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        <div className="grid gap-4">
+          <Link
+            href={`/articles/${secondaryArticle.slug}`}
+            className="rounded-[1.9rem] border border-line bg-white/44 p-6 transition-colors hover:border-foreground"
+          >
+            <p className="section-kicker">主线延伸</p>
+            <h3 className="mt-4 text-2xl font-semibold tracking-[-0.03em] text-foreground">
+              {secondaryArticle.title}
+            </h3>
+            <p className="mt-3 max-w-2xl text-sm leading-8 text-muted">
+              {secondaryArticle.description}
+            </p>
+            <div className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-foreground">
+              继续展开
+              <ArrowRight className="h-4 w-4" />
+            </div>
+          </Link>
+
+          <details className="rounded-[1.9rem] border border-line bg-white/28 p-6 open:bg-white/42">
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-4">
+              <div>
+                <p className="section-kicker">最新日志</p>
+                <p className="mt-2 text-xl font-semibold text-foreground">最近更新的文章与补充阅读</p>
+              </div>
+              <ShieldCheck className="h-5 w-5 text-foreground" />
+            </summary>
+
+            <div className="mt-5 space-y-4">
+              {latestArticles.slice(0, 4).map((article) => (
+                <Link
+                  key={article.slug}
+                  href={`/articles/${article.slug}`}
+                  className="block border-b border-line pb-4 last:border-b-0 last:pb-0"
+                >
+                  <p className="text-[11px] uppercase tracking-[0.24em] text-muted [font-family:var(--font-mono),monospace]">
+                    {article.categoryName} / {article.readingTime}
+                  </p>
+                  <p className="mt-2 text-lg font-medium text-foreground">{article.title}</p>
+                  <p className="mt-2 text-sm leading-7 text-muted">{article.description}</p>
                 </Link>
               ))}
             </div>
-          </div>
-
-          <div className="glass-card border-white/10 bg-white/[0.03] p-5">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className="section-kicker">快速航路</p>
-                <h2 className="mt-2 text-2xl font-semibold tracking-tight text-foreground">
-                  先选你现在最急的事
-                </h2>
-              </div>
-              <Layers3 className="mt-1 h-5 w-5 text-accent" />
-            </div>
-            <div className="mt-5 grid gap-3">
-              {modules.map((module) => {
-                const Icon = module.icon;
-
-                return (
-                  <div
-                    key={module.key}
-                    className="rounded-[24px] border border-white/8 bg-white/[0.04] px-4 py-4"
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-accent-soft text-accent">
-                        <Icon className="h-4 w-4" />
-                      </span>
-                      <div>
-                        <p className="text-sm font-medium text-foreground">{module.title}</p>
-                        <p className="mt-1 text-sm leading-6 text-muted">
-                          {module.description}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section ref={cardsRef} className="grid gap-4 md:grid-cols-3">
-        {categories.slice(0, 3).map((category) => (
-          <Link
-            key={category.slug}
-            href={`/category/${category.slug}`}
-            className="glass-card group p-5 transition-transform duration-200 hover:-translate-y-0.5"
-          >
-            <div className="flex items-center justify-between gap-3">
-              <span className="text-sm font-medium text-foreground">{category.name}</span>
-              <span className="rounded-full bg-white/8 px-2.5 py-1 text-xs text-muted">
-                {category.count} 篇
-              </span>
-            </div>
-            <p className="mt-3 text-sm leading-7 text-muted">{category.description}</p>
-            <div className="mt-5 flex items-center gap-2 text-sm text-accent">
-              进入分类
-              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-            </div>
-          </Link>
-        ))}
-      </section>
-
-      <section className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
-        <div className="glass-card-strong p-5 md:p-6">
-          <div className="flex flex-wrap items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setOpenPanel("guides")}
-              className={`rounded-full px-4 py-2 text-sm transition-colors ${
-                openPanel === "guides"
-                  ? "bg-white text-slate-950"
-                  : "bg-white/6 text-muted hover:text-foreground"
-              }`}
-            >
-              精选教程
-            </button>
-            <button
-              type="button"
-              onClick={() => setOpenPanel("resources")}
-              className={`rounded-full px-4 py-2 text-sm transition-colors ${
-                openPanel === "resources"
-                  ? "bg-white text-slate-950"
-                  : "bg-white/6 text-muted hover:text-foreground"
-              }`}
-            >
-              推荐资源
-            </button>
-            <button
-              type="button"
-              onClick={() => setOpenPanel("updates")}
-              className={`rounded-full px-4 py-2 text-sm transition-colors ${
-                openPanel === "updates"
-                  ? "bg-white text-slate-950"
-                  : "bg-white/6 text-muted hover:text-foreground"
-              }`}
-            >
-              最近更新
-            </button>
-          </div>
-
-          <div className="mt-6">
-            {openPanel === "guides" ? (
-              <div className="grid gap-4 md:grid-cols-2">
-                {featuredArticles.map((article) => (
-                  <ArticleCard key={article.slug} article={article} compact />
-                ))}
-              </div>
-            ) : null}
-
-            {openPanel === "resources" ? (
-              <div className="grid gap-4 md:grid-cols-2">
-                {resources.slice(0, 4).map((item) => (
-                  <ResourceCard key={item.name} item={item} compact />
-                ))}
-              </div>
-            ) : null}
-
-            {openPanel === "updates" ? (
-              <div className="grid gap-3">
-                {latestArticles.slice(0, 5).map((article) => (
-                  <Link
-                    key={article.slug}
-                    href={`/articles/${article.slug}`}
-                    className="rounded-[24px] border border-white/8 bg-white/[0.04] px-4 py-4 transition-colors hover:border-line-strong hover:bg-white/[0.06]"
-                  >
-                    <div className="flex items-center justify-between gap-3">
-                      <p className="text-sm font-medium text-foreground">
-                        {article.title}
-                      </p>
-                      <span className="text-xs text-muted">{article.readingTime}</span>
-                    </div>
-                    <p className="mt-2 text-sm leading-7 text-muted">
-                      {article.description}
-                    </p>
-                  </Link>
-                ))}
-              </div>
-            ) : null}
-          </div>
-        </div>
-
-        <div className="space-y-4">
-          <details open className="glass-card group overflow-hidden">
-            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4">
-              <div>
-                <p className="section-kicker">折叠模块</p>
-                <h3 className="mt-1 text-xl font-semibold tracking-tight text-foreground">
-                  登船指南
-                </h3>
-              </div>
-              <ChevronDown className="h-4 w-4 text-muted transition-transform group-open:rotate-180" />
-            </summary>
-            <div className="soft-divider px-5 pb-5 pt-4">
-              <div className="space-y-3">
-                {[
-                  "先决定你到底要用聊天、写作还是开发类工具。",
-                  "账号路径和支付路径只先跑通一条，不要一开始就并行折腾。",
-                  "先小额验证可用性，再决定长期订阅与礼品卡储值。",
-                ].map((item, index) => (
-                  <div key={item} className="flex gap-3">
-                    <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent-soft text-xs font-semibold text-accent">
-                      {index + 1}
-                    </span>
-                    <p className="text-sm leading-7 text-muted">{item}</p>
-                  </div>
-                ))}
-              </div>
-              <Link href="/start" className="mt-4 inline-flex text-sm font-medium text-accent">
-                查看完整登船指南
-              </Link>
-            </div>
           </details>
-
-          <details className="glass-card group overflow-hidden">
-            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4">
-              <div>
-                <p className="section-kicker">折叠模块</p>
-                <h3 className="mt-1 text-xl font-semibold tracking-tight text-foreground">
-                  补给与订阅入口
-                </h3>
-              </div>
-              <ChevronDown className="h-4 w-4 text-muted transition-transform group-open:rotate-180" />
-            </summary>
-            <div className="soft-divider px-5 pb-5 pt-4">
-              <p className="text-sm leading-7 text-muted">
-                暂时先用邮箱和微信占位，不把首页继续拉得过长。等内容跑顺后，再接邮件订阅或更精细的转化页。
-              </p>
-              <div className="mt-4 rounded-[22px] border border-white/8 bg-white/[0.04] px-4 py-4 text-sm leading-7 text-muted">
-                邮箱：hello@example.com
-                <br />
-                微信：待补充
-              </div>
-            </div>
-          </details>
-        </div>
-      </section>
-
-      <section className="glass-card-strong p-5 md:p-6">
-        <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-          <div>
-            <p className="section-kicker">更多航路</p>
-            <h2 className="section-title mt-2">剩余内容先收短，再按需展开</h2>
-          </div>
-          <Link href="/category" className="button-secondary w-fit">
-            查看全部分类
-          </Link>
-        </div>
-        <div className="mt-5 flex flex-wrap gap-3">
-          {categories.map((category) => (
-            <Link
-              key={category.slug}
-              href={`/category/${category.slug}`}
-              className="rounded-full border border-line bg-white/6 px-4 py-2 text-sm text-muted transition-colors hover:border-line-strong hover:text-foreground"
-            >
-              {category.name}
-            </Link>
-          ))}
         </div>
       </section>
     </div>

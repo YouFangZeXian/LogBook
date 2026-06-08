@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Noto_Sans_SC, Noto_Serif_SC } from "next/font/google";
+import { IBM_Plex_Mono, Noto_Sans_SC, Noto_Serif_SC } from "next/font/google";
 
 import "./globals.css";
 
@@ -18,6 +18,13 @@ const notoSerifSC = Noto_Serif_SC({
   variable: "--font-noto-serif-sc",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
+
+const ibmPlexMono = IBM_Plex_Mono({
+  variable: "--font-ibm-plex-mono",
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
   display: "swap",
 });
 
@@ -47,7 +54,7 @@ export default function RootLayout({
   return (
     <html
       lang="zh-CN"
-      className={`${notoSansSC.variable} ${notoSerifSC.variable}`}
+      className={`${notoSansSC.variable} ${notoSerifSC.variable} ${ibmPlexMono.variable}`}
     >
       <body className="min-h-screen bg-background text-foreground">
         <SiteShell searchEntries={searchEntries}>{children}</SiteShell>

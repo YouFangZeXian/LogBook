@@ -9,78 +9,84 @@ type SiteHeaderProps = {
 };
 
 export function SiteHeader({ onOpenSearch }: SiteHeaderProps) {
+  const primaryNav = siteConfig.navigation.slice(0, 5);
+
   return (
-    <header className="sticky top-0 z-40 border-b border-white/8 bg-slate-950/55 backdrop-blur-2xl">
+    <header className="sticky top-0 z-40 border-b border-line bg-background/92 backdrop-blur-md">
       <div className="page-shell py-4">
-        <div className="glass-card flex items-center justify-between gap-3 px-4 py-3">
-          <Link href="/" className="group flex items-center gap-3" aria-label="返回路格舶首页">
-            <span className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-2xl border border-line bg-white/6 shadow-[0_0_24px_rgba(83,140,255,0.18)] transition-transform duration-200 group-hover:scale-[1.04]">
-              <Image
-                src="/logo-mark.png"
-                alt="路格舶 logo"
-                width={40}
-                height={40}
-                className="h-full w-full object-cover"
-                priority
-              />
-            </span>
-            <div className="flex flex-col">
-              <span className="text-[11px] font-medium uppercase tracking-[0.24em] text-accent">
-                Logbook
-              </span>
-              <span className="text-sm font-semibold tracking-tight text-foreground">
-                路格舶
-              </span>
-            </div>
-          </Link>
-
-          <div className="hidden min-w-[340px] flex-1 px-4 md:block">
-            <button
-              type="button"
-              onClick={onOpenSearch}
-              className="flex w-full items-center gap-3 rounded-full border border-line bg-white/6 px-4 py-3 text-left text-sm text-muted transition-colors hover:border-line-strong hover:text-foreground"
+        <div className="grid gap-4 lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:items-center">
+          <div className="flex items-center justify-between gap-4">
+            <Link
+              href="/"
+              className="group flex items-center gap-3"
+              aria-label="返回路格舶首页"
             >
-              <Search className="h-4 w-4 text-accent" />
-              搜索文章、分类、工具或航路
-            </button>
-          </div>
+              <span className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full border border-line bg-white/55 transition-transform duration-200 group-hover:scale-[1.04]">
+                <Image
+                  src="/logo-mark.png"
+                  alt="路格舶 logo"
+                  width={40}
+                  height={40}
+                  className="h-full w-full object-cover"
+                  priority
+                />
+              </span>
 
-          <nav className="hidden items-center gap-2 xl:flex">
-            {siteConfig.navigation.slice(0, 5).map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="rounded-full px-3 py-2 text-sm text-muted transition-colors hover:bg-white/6 hover:text-foreground"
-              >
-                {item.label}
-              </Link>
-            ))}
-          </nav>
+              <div className="min-w-0">
+                <p className="text-[11px] uppercase tracking-[0.24em] text-muted [font-family:var(--font-mono),monospace]">
+                  Logbook.today
+                </p>
+                <p className="truncate text-sm font-semibold tracking-tight text-foreground">
+                  {siteConfig.shortName}
+                </p>
+              </div>
+            </Link>
 
-          <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={onOpenSearch}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-line bg-white/6 text-muted transition-colors hover:text-foreground md:hidden"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-line bg-white/35 text-muted transition-colors hover:border-foreground hover:text-foreground lg:hidden"
               aria-label="打开搜索"
             >
               <Search className="h-4 w-4" />
             </button>
-            <Link href="/start" className="button-primary hidden md:inline-flex">
+          </div>
+
+          <div className="hidden items-center justify-center gap-8 lg:flex">
+            <p className="max-w-sm text-center text-[11px] uppercase leading-5 tracking-[0.24em] text-muted [font-family:var(--font-mono),monospace]">
+              {siteConfig.motto}
+            </p>
+
+            <nav className="flex items-center gap-4">
+              {primaryNav.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="text-sm text-muted transition-colors hover:text-foreground"
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </nav>
+          </div>
+
+          <div className="hidden items-center justify-end gap-3 lg:flex">
+            <button type="button" onClick={onOpenSearch} className="button-secondary">
+              <Search className="mr-2 h-4 w-4" />
+              搜索
+            </button>
+            <Link href="/start" className="button-primary">
               登船指南
-            </Link>
-            <Link href="/category" className="button-secondary hidden sm:inline-flex xl:hidden">
-              航路
             </Link>
           </div>
         </div>
 
-        <div className="hide-scrollbar mt-3 flex gap-2 overflow-x-auto pb-1 xl:hidden">
+        <div className="hide-scrollbar mt-3 flex gap-2 overflow-x-auto pb-1 lg:hidden">
           {siteConfig.navigation.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="shrink-0 rounded-full border border-line bg-white/6 px-3 py-2 text-sm text-muted transition-colors hover:border-line-strong hover:text-foreground"
+              className="shrink-0 rounded-full border border-line bg-white/35 px-3 py-2 text-sm text-muted transition-colors hover:border-foreground hover:text-foreground"
             >
               {item.label}
             </Link>
