@@ -264,9 +264,9 @@ export function HomeExperience({
 
             <div data-hero-item className="space-y-5">
               <h1 className="max-w-5xl font-serif text-[clamp(3.3rem,8vw,7rem)] leading-[0.96] tracking-[-0.05em] text-foreground">
-                寻未知路；格世界物；
-                <br />
-                舶沧海途。
+                <span className="block">寻未知路；</span>
+                <span className="block">格世界物；</span>
+                <span className="block">舶沧海途。</span>
               </h1>
               <p className="max-w-2xl text-lg leading-9 text-muted">
                 路格舶更像一份航海总图。先告诉你该从哪里起步，再把支付、工具和长期方案放进该出现的位置。
