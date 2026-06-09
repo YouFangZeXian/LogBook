@@ -4,13 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import {
-  List,
-  MagnifyingGlass,
-  Moon,
-  SidebarSimple,
-  SunDim,
-} from "@phosphor-icons/react/dist/ssr";
+import { List, MagnifyingGlass } from "@phosphor-icons/react/dist/ssr";
 
 import { getCurrentLogbookUser, requestLogbookLogin } from "@/components/auth-dialog";
 import { siteConfig } from "@/lib/site";
@@ -20,8 +14,6 @@ type SiteHeaderProps = {
   onOpenSidebar: () => void;
   onToggleSidebar: () => void;
   sidebarCollapsed: boolean;
-  theme: "light" | "dark";
-  onToggleTheme: () => void;
 };
 
 const pageTitleMap: Record<string, string> = {
@@ -41,127 +33,139 @@ const pageTitleMap: Record<string, string> = {
 export function SiteHeader({
   onOpenSearch,
   onOpenSidebar,
-  onToggleSidebar,
-  sidebarCollapsed,
-  theme,
-  onToggleTheme,
 }: SiteHeaderProps) {
   const pathname = usePathname();
   const [userName, setUserName] = useState("");
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const sync = () => {
-      setUserName(getCurrentLogbookUser()?.name ?? "");
-    };
-
+    const sync = () => setUserName(getCurrentLogbookUser()?.name ?? "");
     sync();
     window.addEventListener("logbook-auth-changed", sync);
-
     return () => window.removeEventListener("logbook-auth-changed", sync);
   }, []);
 
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 16);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   const pageLabel = useMemo(() => {
-    if (pathname.startsWith("/articles/")) {
-      return "文章";
-    }
-
-    if (pathname.startsWith("/category/") && pathname !== "/category") {
-      return "分类文章";
-    }
-
+    if (pathname.startsWith("/articles/")) return "文章";
+    if (pathname.startsWith("/category/") && pathname !== "/category") return "分类文章";
     return pageTitleMap[pathname] ?? "路格舶";
   }, [pathname]);
 
-  const logout = () => {
-    window.localStorage.removeItem("logbook.auth.user");
-    window.dispatchEvent(new Event("logbook-auth-changed"));
-  };
+  const isHome = pathname === "/";
 
   return (
-    <header className="sticky top-0 z-40 border-b border-line bg-background/94 backdrop-blur-xl">
-      <div className="page-shell py-3">
-        <div className="flex items-center justify-between gap-3">
-          <div className="flex min-w-0 items-center gap-3">
-            <button
-              type="button"
-              onClick={onOpenSidebar}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-[10px] border border-line bg-white/60 text-muted transition-colors hover:border-foreground hover:text-foreground lg:hidden"
-              aria-label="打开侧边栏"
-            >
-              <List size={16} />
-            </button>
+    <header
+      className={`sticky top-0 z-40 transition-all duration-300 ${
+        scrolled
+          ? "border-b border-border bg-white/88 backdrop-blur-xl"
+          : isHome
+            ? "border-transparent bg-transparent"
+            : "border-b border-border bg-white/80 backdrop-blur-lg"
+      }`}
+    >
+      <div className="page-shell flex h-14 items-center justify-between">
+        {/* Left */}
+        <div className="flex min-w-0 items-center gap-3">
+          {/* Mobile menu trigger */}
+          <button
+            type="button"
+            onClick={onOpenSidebar}
+            className="inline-flex h-9 w-9 items-center justify-center rounded-[10px] text-muted transition-colors hover:bg-black/5 hover:text-foreground lg:hidden"
+            aria-label="打开菜单"
+          >
+            <List size={18} />
+          </button>
 
-            <button
-              type="button"
-              onClick={onToggleSidebar}
-              className="hidden h-10 w-10 items-center justify-center rounded-[10px] border border-line bg-white/60 text-muted transition-colors hover:border-foreground hover:text-foreground lg:inline-flex"
-              aria-label={sidebarCollapsed ? "展开侧边栏" : "收起侧边栏"}
-              title={sidebarCollapsed ? "展开侧边栏" : "收起侧边栏"}
-            >
-              <SidebarSimple size={16} weight={sidebarCollapsed ? "regular" : "fill"} />
-            </button>
-
-            <Link href="/" className="flex shrink-0 items-center gap-3 lg:hidden">
-              <span className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-[12px] border border-line bg-white/70">
-                <Image
-                  src="/logo-mark.png"
-                  alt="路格舶 logo"
-                  width={38}
-                  height={38}
-                  className="h-full w-full object-cover"
-                />
-              </span>
-            </Link>
-
-            <div className="min-w-0">
-              <p className="text-[11px] uppercase tracking-[0.18em] text-muted [font-family:var(--font-mono),monospace]">
+          {/* Logo */}
+          <Link href="/" className="flex shrink-0 items-center gap-2.5">
+            <span className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-[10px] border border-border bg-white">
+              <Image
+                src="/logo-mark.png"
+                alt="路格舶"
+                width={28}
+                height={28}
+                className="h-full w-full object-cover"
+              />
+            </span>
+            <span className="hidden sm:block">
+              <span className="text-[11px] uppercase tracking-[0.12em] text-faint [font-family:var(--font-mono)]">
                 {siteConfig.logline}
-              </p>
-              <p className="truncate text-sm font-semibold tracking-tight text-foreground">{pageLabel}</p>
-            </div>
-          </div>
+              </span>
+              <span className="block text-sm font-semibold tracking-[-0.01em] text-foreground">
+                {pageLabel}
+              </span>
+            </span>
+          </Link>
+        </div>
 
-          <div className="flex items-center gap-2">
+        {/* Center: Desktop nav links */}
+        <nav className="hidden items-center gap-1 lg:flex">
+          {[
+            { href: "/start", label: "登船" },
+            { href: "/category", label: "航路" },
+            { href: "/tools", label: "船坞" },
+            { href: "/resources", label: "补给" },
+            { href: "/discoveries", label: "发现" },
+          ].map((item) => {
+            const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`rounded-[10px] px-3 py-1.5 text-sm font-medium transition-colors ${
+                  active
+                    ? "bg-brand text-white"
+                    : "text-muted hover:bg-black/5 hover:text-foreground"
+                }`}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
+        </nav>
+
+        {/* Right */}
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={onOpenSearch}
+            className="inline-flex h-9 w-9 items-center justify-center rounded-[10px] text-muted transition-colors hover:bg-black/5 hover:text-foreground"
+            aria-label="搜索"
+          >
+            <MagnifyingGlass size={17} />
+          </button>
+
+          {userName ? (
             <button
               type="button"
-              onClick={onToggleTheme}
-              className="button-secondary px-3 py-2.5 sm:px-4 sm:py-3"
-              aria-label={theme === "light" ? "切换到夜间模式" : "切换到日间模式"}
-              title={theme === "light" ? "切换到夜间模式" : "切换到日间模式"}
+              onClick={() => {
+                window.localStorage.removeItem("logbook.auth.user");
+                window.dispatchEvent(new Event("logbook-auth-changed"));
+              }}
+              className="hidden rounded-[10px] px-3 py-1.5 text-sm font-medium text-muted transition-colors hover:bg-black/5 hover:text-foreground sm:block"
+              title="退出"
             >
-              {theme === "light" ? (
-                <Moon size={16} className="sm:mr-2" />
-              ) : (
-                <SunDim size={16} className="sm:mr-2" />
-              )}
-              <span className="hidden sm:inline">{theme === "light" ? "夜间" : "日间"}</span>
+              {userName}
             </button>
-            <button type="button" onClick={onOpenSearch} className="button-secondary px-3 py-2.5 sm:px-5 sm:py-3">
-              <MagnifyingGlass size={16} className="sm:mr-2" />
-              <span className="hidden sm:inline">搜索</span>
+          ) : (
+            <button
+              type="button"
+              onClick={() => requestLogbookLogin()}
+              className="hidden rounded-[10px] px-3 py-1.5 text-sm font-medium text-muted transition-colors hover:bg-black/5 hover:text-foreground sm:block"
+            >
+              登录
             </button>
-            {userName ? (
-              <button
-                type="button"
-                onClick={logout}
-                className="button-secondary hidden max-w-40 truncate sm:inline-flex"
-                title="退出本地船员身份"
-              >
-                {userName}
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={() => requestLogbookLogin()}
-                className="button-secondary hidden sm:inline-flex"
-              >
-                登录
-              </button>
-            )}
-            <Link href="/start" className="button-primary px-4 py-2.5 text-xs sm:px-5 sm:py-3 sm:text-sm">
-              登船
-            </Link>
-          </div>
+          )}
+
+          <Link href="/start" className="btn-primary px-4 py-2 text-sm">
+            登船
+          </Link>
         </div>
       </div>
     </header>

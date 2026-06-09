@@ -12,17 +12,10 @@ type AuthUser = {
 };
 
 function getStoredUser(): AuthUser | null {
-  if (typeof window === "undefined") {
-    return null;
-  }
-
-  const raw = window.localStorage.getItem(AUTH_KEY);
-  if (!raw) {
-    return null;
-  }
-
+  if (typeof window === "undefined") return null;
   try {
-    return JSON.parse(raw) as AuthUser;
+    const raw = window.localStorage.getItem(AUTH_KEY);
+    return raw ? (JSON.parse(raw) as AuthUser) : null;
   } catch {
     return null;
   }
@@ -33,10 +26,7 @@ export function getCurrentLogbookUser() {
 }
 
 export function requestLogbookLogin(reason?: string) {
-  if (typeof window === "undefined") {
-    return;
-  }
-
+  if (typeof window === "undefined") return;
   window.dispatchEvent(new CustomEvent("logbook-auth-required", { detail: { reason } }));
 }
 
@@ -48,20 +38,16 @@ export function AuthDialog() {
   const [reason, setReason] = useState("");
 
   useEffect(() => {
-    const openHandler = (event: Event) => {
+    const handler = (event: Event) => {
       const detail = (event as CustomEvent<{ reason?: string }>).detail;
       setReason(detail?.reason ?? "");
       setOpen(true);
     };
-
-    window.addEventListener("logbook-auth-required", openHandler);
-
-    return () => window.removeEventListener("logbook-auth-required", openHandler);
+    window.addEventListener("logbook-auth-required", handler);
+    return () => window.removeEventListener("logbook-auth-required", handler);
   }, []);
 
-  if (!open) {
-    return null;
-  }
+  if (!open) return null;
 
   const submit = () => {
     const normalizedEmail = email.trim() || "crew@logbook.today";
@@ -70,86 +56,91 @@ export function AuthDialog() {
       name: normalizedEmail.split("@")[0] || "logbook-crew",
       joinedAt: new Date().toISOString(),
     };
-
     window.localStorage.setItem(AUTH_KEY, JSON.stringify(user));
     window.dispatchEvent(new Event("logbook-auth-changed"));
     setOpen(false);
     setPassword("");
   };
 
+  const skip = () => setOpen(false);
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/24 px-4 py-8 backdrop-blur-sm">
-      <section className="w-full max-w-md rounded-[1rem] border border-line bg-background p-5 shadow-[0_28px_80px_-58px_rgba(18,18,18,0.65)]">
-        <div className="flex items-start justify-between gap-4 border-b border-line pb-4">
-          <div>
-            <p className="section-kicker">路格舶 / Logbook.today</p>
-            <h2 className="mt-4 text-2xl font-semibold tracking-tight text-foreground">
-              登录不是上锁，而是让你的航线被记住。
-            </h2>
-            {reason ? <p className="mt-3 text-sm leading-7 text-muted">{reason}</p> : null}
-          </div>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/25 px-4 py-10 backdrop-blur-sm">
+      <section className="w-full max-w-[400px] rounded-[24px] border border-border bg-white p-6 shadow-[0_20px_60px_rgba(15,61,94,0.12)]">
+        {/* Close button */}
+        <div className="flex justify-end">
           <button
             type="button"
-            onClick={() => setOpen(false)}
-            className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[0.75rem] border border-line bg-white/60 text-muted transition-colors hover:text-foreground"
-            aria-label="关闭登录窗口"
+            onClick={skip}
+            className="inline-flex h-8 w-8 items-center justify-center rounded-[10px] text-faint transition-colors hover:bg-black/5 hover:text-foreground"
+            aria-label="关闭"
           >
-            <X size={15} />
+            <X size={16} />
           </button>
         </div>
 
-        <div className="mt-5 grid grid-cols-2 gap-2 rounded-[0.85rem] border border-line bg-white/55 p-1">
+        {/* Emotional headline */}
+        <div className="text-center">
+          <p className="mt-1 text-[11px] uppercase tracking-[0.12em] text-faint [font-family:var(--font-mono)]">
+            路格舶 / Logbook.today
+          </p>
+          <h2 className="mt-4 text-xl font-semibold tracking-[-0.03em] text-foreground leading-snug">
+            登录不是上锁，
+            <br />
+            而是让你的航线被记住。
+          </h2>
+          {reason ? (
+            <p className="mt-3 text-sm leading-6 text-muted">{reason}</p>
+          ) : null}
+        </div>
+
+        {/* Mode toggle */}
+        <div className="mt-6 grid grid-cols-2 gap-1 rounded-[14px] border border-border bg-background-secondary p-1">
           {(["login", "register"] as const).map((item) => (
             <button
               key={item}
               type="button"
               onClick={() => setMode(item)}
-              className={[
-                "rounded-[0.65rem] px-3 py-2 text-sm font-medium transition-colors",
-                mode === item ? "bg-foreground text-background" : "text-muted hover:text-foreground",
-              ].join(" ")}
+              className={`rounded-[10px] py-2 text-sm font-medium transition-all ${
+                mode === item
+                  ? "bg-brand text-white shadow-[0_1px_3px_rgba(15,61,94,0.15)]"
+                  : "text-muted hover:text-foreground"
+              }`}
             >
               {item === "login" ? "登录" : "注册"}
             </button>
           ))}
         </div>
 
+        {/* Form */}
         <div className="mt-5 space-y-3">
-          <label className="block space-y-2 text-sm">
-            <span className="font-medium text-foreground">邮箱</span>
-            <input
-              type="email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              placeholder="crew@example.com"
-              className="w-full rounded-[0.8rem] border border-line bg-white/74 px-4 py-3 outline-none transition-colors focus:border-foreground"
-            />
-          </label>
-          <label className="block space-y-2 text-sm">
-            <span className="font-medium text-foreground">密码</span>
-            <input
-              type="password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              placeholder="本地演示，不会发送到服务器"
-              className="w-full rounded-[0.8rem] border border-line bg-white/74 px-4 py-3 outline-none transition-colors focus:border-foreground"
-            />
-          </label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="crew@example.com"
+            className="input-field"
+          />
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="本地演示，不会发送到服务器"
+            className="input-field"
+          />
         </div>
 
-        <button
-          type="button"
-          onClick={submit}
-          className="mt-5 w-full rounded-[0.85rem] border border-foreground bg-foreground px-4 py-3 text-sm font-medium text-background transition-colors hover:bg-black"
-        >
+        {/* Primary button */}
+        <button type="button" onClick={submit} className="btn-primary mt-4 w-full py-3">
           {mode === "login" ? "登录并继续" : "创建船员档案"}
         </button>
 
-        <div className="mt-3 grid gap-2 sm:grid-cols-2">
+        {/* Social login */}
+        <div className="mt-3 grid grid-cols-2 gap-2">
           <button
             type="button"
             onClick={submit}
-            className="inline-flex items-center justify-center gap-2 rounded-[0.8rem] border border-line bg-white/68 px-4 py-3 text-sm text-foreground transition-colors hover:border-foreground"
+            className="btn-secondary py-2.5 text-sm"
           >
             <GithubLogo size={16} weight="fill" />
             GitHub 预留
@@ -157,22 +148,20 @@ export function AuthDialog() {
           <button
             type="button"
             onClick={submit}
-            className="inline-flex items-center justify-center gap-2 rounded-[0.8rem] border border-line bg-white/68 px-4 py-3 text-sm text-foreground transition-colors hover:border-foreground"
+            className="btn-secondary py-2.5 text-sm"
           >
             <GoogleLogo size={16} weight="bold" />
             Google 预留
           </button>
         </div>
 
-        <button
-          type="button"
-          onClick={() => setOpen(false)}
-          className="mt-3 w-full rounded-[0.85rem] border border-sky-200 bg-sky-50/80 px-4 py-3 text-sm font-medium text-sky-800 transition-colors hover:border-sky-300"
-        >
+        {/* Prominent skip button */}
+        <button type="button" onClick={skip} className="btn-mist mt-3 w-full py-3">
           不注册，直接访问
         </button>
 
-        <p className="mt-5 text-center text-xs leading-6 text-muted">
+        {/* Bottom text */}
+        <p className="mt-5 text-center text-xs leading-6 text-faint">
           注册不是为了阻拦出海，而是船舱想听见你的故事。
         </p>
       </section>

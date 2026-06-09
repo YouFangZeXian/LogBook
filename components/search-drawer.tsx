@@ -1,13 +1,7 @@
 "use client";
-
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import {
-  MagnifyingGlass,
-  Sparkle,
-  X,
-} from "@phosphor-icons/react/dist/ssr";
-
+import { MagnifyingGlass, Sparkle, X } from "@phosphor-icons/react/dist/ssr";
 import type { SearchEntry } from "@/lib/content";
 
 type SearchDrawerProps = {
@@ -17,96 +11,66 @@ type SearchDrawerProps = {
 };
 
 const labels: Record<SearchEntry["type"], string> = {
-  article: "文章",
-  category: "分类",
-  resource: "资源",
-  page: "页面",
+  article: "文章", category: "分类", resource: "资源", page: "页面",
 };
 
 export function SearchDrawer({ entries, open, onClose }: SearchDrawerProps) {
   const [query, setQuery] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (open && inputRef.current) setTimeout(() => inputRef.current?.focus(), 100);
+  }, [open]);
+  useEffect(() => {
+    const h = (e: KeyboardEvent) => { if (e.key === "Escape" && open) onClose(); };
+    window.addEventListener("keydown", h);
+    return () => window.removeEventListener("keydown", h);
+  }, [open, onClose]);
 
   const results = useMemo(() => {
-    const normalized = query.trim().toLowerCase();
-
-    if (!normalized) {
-      return entries.slice(0, 8);
-    }
-
-    return entries
-      .filter((entry) => {
-        const haystack = [
-          entry.title,
-          entry.description,
-          ...entry.keywords,
-        ]
-          .join(" ")
-          .toLowerCase();
-
-        return haystack.includes(normalized);
-      })
-      .slice(0, 10);
+    const n = query.trim().toLowerCase();
+    if (!n) return entries.slice(0, 8);
+    return entries.filter((e) => [e.title, e.description, ...e.keywords].join(" ").toLowerCase().includes(n)).slice(0, 10);
   }, [entries, query]);
 
-  if (!open) {
-    return null;
-  }
+  if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/22 px-4 py-5 backdrop-blur-md sm:px-6">
-      <div className="mx-auto flex max-w-3xl flex-col gap-4">
-        <div className="glass-card-strong overflow-hidden">
-          <div className="flex items-center gap-3 border-b border-line px-5 py-4">
-            <MagnifyingGlass size={16} className="text-foreground" />
+    <div className="fixed inset-0 z-50 bg-black/25 px-4 py-6 backdrop-blur-sm">
+      <div className="mx-auto flex max-w-2xl flex-col gap-4">
+        <div className="overflow-hidden rounded-[22px] border border-border bg-white shadow-[0_20px_60px_rgba(15,61,94,0.12)]">
+          <div className="flex items-center gap-3 border-b border-border px-5 py-4">
+            <MagnifyingGlass size={17} className="text-muted" />
             <input
-              autoFocus
+              ref={inputRef}
               value={query}
-              onChange={(event) => setQuery(event.target.value)}
+              onChange={(e) => setQuery(e.target.value)}
               placeholder="搜索文章、分类、工具或航路"
-              className="w-full bg-transparent text-[15px] text-foreground outline-none placeholder:text-muted"
+              className="w-full bg-transparent text-[15px] text-foreground outline-none placeholder:text-faint"
             />
-            <button
-              type="button"
-              onClick={onClose}
-              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-line bg-white/35 text-muted transition-colors hover:border-foreground hover:text-foreground"
-              aria-label="关闭搜索"
-            >
+            <button type="button" onClick={onClose} className="inline-flex h-8 w-8 items-center justify-center rounded-[10px] text-faint transition-colors hover:bg-black/5" aria-label="关闭">
               <X size={16} />
             </button>
           </div>
-
-          <div className="max-h-[70vh] overflow-y-auto px-3 py-3">
+          <div className="max-h-[60vh] overflow-y-auto p-3">
             {results.length ? (
-              <div className="space-y-2">
+              <div className="space-y-1">
                 {results.map((entry) => (
-                  <Link
-                    key={`${entry.type}-${entry.href}`}
-                    href={entry.href}
-                    onClick={() => {
-                      setQuery("");
-                      onClose();
-                    }}
-                    className="flex flex-col gap-2 rounded-[14px] border border-transparent bg-white/34 px-4 py-4 transition-colors hover:border-line-strong hover:bg-white/56"
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="border border-line bg-white/45 px-2.5 py-1 text-[11px] font-medium uppercase tracking-[0.2em] text-muted [font-family:var(--font-mono),monospace]">
-                        {labels[entry.type]}
-                      </span>
-                      <span className="text-sm font-medium text-foreground">
-                        {entry.title}
-                      </span>
+                  <Link key={`${entry.type}-${entry.href}`} href={entry.href} onClick={() => { setQuery(""); onClose(); }}
+                    className="flex flex-col gap-1 rounded-[14px] px-4 py-3 transition-colors hover:bg-background-secondary">
+                    <div className="flex items-center gap-2">
+                      <span className="tag text-[10px]">{labels[entry.type]}</span>
+                      <span className="text-sm font-semibold text-foreground">{entry.title}</span>
                     </div>
-                    <p className="text-sm leading-7 text-muted">{entry.description}</p>
+                    <p className="text-sm leading-6 text-muted">{entry.description}</p>
                   </Link>
                 ))}
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center gap-3 px-6 py-16 text-center">
+              <div className="flex flex-col items-center gap-3 py-14 text-center">
                 <Sparkle size={20} className="text-foreground" />
-                <p className="text-sm text-foreground">没有找到匹配内容</p>
-                <p className="max-w-md text-sm leading-7 text-muted">
-                  可以试试搜 ChatGPT、Apple ID、Cursor、礼品卡、学生方案这类关键词。
-                </p>
+                <p className="text-sm font-medium text-foreground">没有找到匹配内容</p>
+                <p className="text-sm leading-6 text-muted">试试搜 ChatGPT、Apple ID、Cursor、礼品卡</p>
               </div>
             )}
           </div>
