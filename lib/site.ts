@@ -17,6 +17,16 @@ export type CategoryConfig = {
   recommendedSlugs: string[];
 };
 
+export type NavItem = {
+  href: string;
+  label: string;
+};
+
+export type NavSection = {
+  title: string;
+  items: NavItem[];
+};
+
 const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL ??
   process.env.SITE_URL ??
@@ -57,6 +67,34 @@ export const siteConfig = {
     { href: "/products", label: "产品" },
     { href: "/about", label: "关于" },
   ],
+  navSections: [
+    {
+      title: "主航道",
+      items: [
+        { href: "/", label: "首页" },
+        { href: "/start", label: "登船指南" },
+        { href: "/routes", label: "航线页" },
+        { href: "/category", label: "航路" },
+      ],
+    },
+    {
+      title: "工具与补给",
+      items: [
+        { href: "/tools", label: "船坞" },
+        { href: "/resources", label: "补给站" },
+        { href: "/discoveries", label: "新大陆" },
+        { href: "/products", label: "产品" },
+      ],
+    },
+    {
+      title: "日志与船员",
+      items: [
+        { href: "/contribute", label: "投稿" },
+        { href: "/crew", label: "船员" },
+        { href: "/about", label: "关于" },
+      ],
+    },
+  ] satisfies NavSection[],
   footerDisclaimer:
     "本站内容仅用于经验整理与信息参考，不提供盗版、破解、黑卡、欺诈、违规账号买卖等服务，也不会承诺订阅一定成功或保证收益。",
 } as const;
