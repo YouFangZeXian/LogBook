@@ -23,7 +23,7 @@ export function SubscriptionCostCalculator() {
   }, [exchangeRate, feeRate, usdPrice]);
 
   return (
-    <section className="card p-6">
+    <section className="surface-panel p-6">
       <div className="space-y-2">
         <BrandMark brand="chatgpt" size="sm" />
         <h2 className="text-2xl font-semibold tracking-tight text-foreground">
@@ -41,7 +41,7 @@ export function SubscriptionCostCalculator() {
             type="number"
             value={usdPrice}
             onChange={(event) => setUsdPrice(event.target.value)}
-            className="w-full rounded-2xl border border-line bg-white px-4 py-3 outline-none transition-colors focus:border-accent"
+            className="w-full rounded-[10px] border border-line bg-white px-4 py-3 outline-none transition-colors focus:border-accent"
           />
         </label>
         <label className="space-y-2 text-sm">
@@ -51,7 +51,7 @@ export function SubscriptionCostCalculator() {
             step="0.01"
             value={exchangeRate}
             onChange={(event) => setExchangeRate(event.target.value)}
-            className="w-full rounded-2xl border border-line bg-white px-4 py-3 outline-none transition-colors focus:border-accent"
+            className="w-full rounded-[10px] border border-line bg-white px-4 py-3 outline-none transition-colors focus:border-accent"
           />
         </label>
         <label className="space-y-2 text-sm">
@@ -61,25 +61,25 @@ export function SubscriptionCostCalculator() {
             step="0.1"
             value={feeRate}
             onChange={(event) => setFeeRate(event.target.value)}
-            className="w-full rounded-2xl border border-line bg-white px-4 py-3 outline-none transition-colors focus:border-accent"
+            className="w-full rounded-[10px] border border-line bg-white px-4 py-3 outline-none transition-colors focus:border-accent"
           />
         </label>
       </div>
 
       <div className="mt-6 grid gap-4 md:grid-cols-3">
-        <div className="rounded-2xl border border-line bg-soft p-4">
+        <div className="surface-muted p-4">
           <p className="text-sm text-muted">基础人民币成本</p>
           <p className="mt-2 text-2xl font-semibold text-foreground">
             ¥{result.base.toFixed(2)}
           </p>
         </div>
-        <div className="rounded-2xl border border-amber-200/70 bg-amber-50/70 p-4">
+        <div className="surface-muted p-4">
           <p className="text-sm text-muted">手续费金额</p>
           <p className="mt-2 text-2xl font-semibold text-foreground">
             ¥{result.feeAmount.toFixed(2)}
           </p>
         </div>
-        <div className="rounded-2xl border border-emerald-200/70 bg-emerald-50/70 p-4">
+        <div className="surface-panel p-4">
           <p className="text-sm text-muted">最终月成本</p>
           <p className="mt-2 text-2xl font-semibold text-foreground">
             ¥{result.total.toFixed(2)}

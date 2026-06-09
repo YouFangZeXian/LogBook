@@ -9,10 +9,10 @@ export const metadata = buildMetadata({
 
 export default function ContributePage() {
   return (
-    <div className="page-shell space-y-8 py-10 md:py-14">
-      <section className="rounded-[1.05rem] border border-line bg-white/68 p-6 md:p-8">
+    <div className="page-shell space-y-8 py-8 md:space-y-10 md:py-12">
+      <section className="surface-panel p-6 md:p-8">
         <p className="section-kicker">投稿 / 勘误 / 问题反馈</p>
-        <h1 className="mt-5 text-4xl font-semibold tracking-tight text-foreground">
+        <h1 className="mt-5 text-[clamp(2.4rem,5vw,4.4rem)] font-serif leading-[0.98] tracking-[-0.05em] text-foreground">
           船舱想听见你的故事。
         </h1>
         <p className="mt-4 max-w-2xl text-sm leading-8 text-muted">

@@ -51,7 +51,7 @@ export function ContributionPanel({ articleTitle, articleSlug }: ContributionPan
   };
 
   return (
-    <section className="card p-6 md:p-8">
+    <section className="surface-panel p-6 md:p-8">
       <div className="grid gap-5 lg:grid-cols-[0.82fr_1.18fr]">
         <div>
           <p className="section-kicker">船舱来信</p>
@@ -109,7 +109,7 @@ export function ContributionPanel({ articleTitle, articleSlug }: ContributionPan
       </div>
 
       {success ? (
-        <div className="mt-5 rounded-[0.9rem] border border-emerald-200 bg-emerald-50/80 p-4 text-sm leading-7 text-emerald-800">
+        <div className="mt-5 rounded-[14px] border border-accent/20 bg-accent-soft p-4 text-sm leading-7 text-accent">
           <div className="flex items-start gap-3">
             <CheckCircle size={18} weight="fill" className="mt-1 shrink-0" />
             <p>

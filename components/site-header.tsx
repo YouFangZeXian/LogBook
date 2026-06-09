@@ -2,8 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { List, MagnifyingGlass } from "@phosphor-icons/react/dist/ssr";
+import { MagnifyingGlass } from "@phosphor-icons/react/dist/ssr";
 
 import { getCurrentLogbookUser, requestLogbookLogin } from "@/components/auth-dialog";
 import { siteConfig } from "@/lib/site";
@@ -13,7 +14,8 @@ type SiteHeaderProps = {
 };
 
 export function SiteHeader({ onOpenSearch }: SiteHeaderProps) {
-  const primaryNav = siteConfig.navigation.slice(0, 5);
+  const primaryNav = siteConfig.navigation.slice(0, 6);
+  const pathname = usePathname();
   const [userName, setUserName] = useState("");
 
   useEffect(() => {
@@ -33,16 +35,16 @@ export function SiteHeader({ onOpenSearch }: SiteHeaderProps) {
   };
 
   return (
-    <header className="sticky top-0 z-40 border-b border-line bg-background/92 backdrop-blur-md">
-      <div className="page-shell py-4">
-        <div className="grid gap-4 lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:items-center">
-          <div className="flex items-center justify-between gap-4">
+    <header className="sticky top-0 z-40 border-b border-line bg-background/94 backdrop-blur-xl">
+      <div className="page-shell py-3">
+        <div className="grid gap-3 lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:items-center">
+          <div className="flex items-center justify-between gap-3">
             <Link
               href="/"
               className="group flex items-center gap-3"
               aria-label="返回路格舶首页"
             >
-              <span className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full border border-line bg-white/55 transition-transform duration-200 group-hover:scale-[1.04]">
+              <span className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-[12px] border border-line bg-white/70 transition-transform duration-200 group-hover:scale-[1.03]">
                 <Image
                   src="/logo-mark.png"
                   alt="路格舶 logo"
@@ -54,7 +56,7 @@ export function SiteHeader({ onOpenSearch }: SiteHeaderProps) {
               </span>
 
               <div className="min-w-0">
-                <p className="text-[11px] uppercase tracking-[0.24em] text-muted [font-family:var(--font-mono),monospace]">
+                <p className="text-[11px] uppercase tracking-[0.18em] text-muted [font-family:var(--font-mono),monospace]">
                   Logbook.today
                 </p>
                 <p className="truncate text-sm font-semibold tracking-tight text-foreground">
@@ -67,28 +69,30 @@ export function SiteHeader({ onOpenSearch }: SiteHeaderProps) {
               <button
                 type="button"
                 onClick={onOpenSearch}
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-line bg-white/35 text-muted transition-colors hover:border-foreground hover:text-foreground"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-[10px] border border-line bg-white/55 text-muted transition-colors hover:border-foreground hover:text-foreground"
                 aria-label="打开搜索"
               >
                 <MagnifyingGlass size={16} />
               </button>
-              <span className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-line bg-white/25 text-muted">
-                <List size={16} />
-              </span>
+              <Link href="/start" className="button-primary px-4 py-2.5 text-xs">
+                登船
+              </Link>
             </div>
           </div>
 
           <div className="hidden items-center justify-center gap-8 lg:flex">
-            <p className="max-w-sm text-center text-[11px] uppercase leading-5 tracking-[0.24em] text-muted [font-family:var(--font-mono),monospace]">
-              {siteConfig.motto}
-            </p>
-
-            <nav className="flex items-center gap-4">
+            <nav className="flex items-center gap-1 rounded-[12px] border border-line bg-white/40 px-2 py-1.5">
               {primaryNav.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="text-sm text-muted transition-colors hover:text-foreground"
+                  aria-current={pathname === item.href ? "page" : undefined}
+                  className={[
+                    "rounded-[8px] px-3 py-2 text-sm transition-colors",
+                    pathname === item.href
+                      ? "bg-white text-foreground"
+                      : "text-muted hover:text-foreground",
+                  ].join(" ")}
                 >
                   {item.label}
                 </Link>
@@ -125,12 +129,25 @@ export function SiteHeader({ onOpenSearch }: SiteHeaderProps) {
           </div>
         </div>
 
-        <div className="hide-scrollbar mt-3 flex gap-4 overflow-x-auto pb-1 lg:hidden">
+        <div className="mt-3 hidden items-center justify-between gap-4 border-t border-line/80 pt-3 lg:flex">
+          <p className="text-[11px] uppercase leading-5 tracking-[0.2em] text-muted [font-family:var(--font-mono),monospace]">
+            {siteConfig.motto}
+          </p>
+          <p className="text-xs text-muted">{siteConfig.logline}</p>
+        </div>
+
+        <div className="hide-scrollbar mt-3 flex gap-2 overflow-x-auto pb-1 lg:hidden">
           {siteConfig.navigation.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="shrink-0 border-b border-transparent px-0 py-2 text-sm text-muted transition-colors hover:border-foreground hover:text-foreground"
+              aria-current={pathname === item.href ? "page" : undefined}
+              className={[
+                "shrink-0 rounded-[8px] border px-3 py-2 text-sm transition-colors",
+                pathname === item.href
+                  ? "border-foreground bg-white/72 text-foreground"
+                  : "border-transparent text-muted hover:border-line hover:bg-white/50 hover:text-foreground",
+              ].join(" ")}
             >
               {item.label}
             </Link>

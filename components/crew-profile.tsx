@@ -58,11 +58,11 @@ export function CrewProfile() {
   }, [progress.length, submissions, userName]);
 
   return (
-    <div className="page-shell space-y-8 py-10 md:py-14">
+    <div className="page-shell space-y-8 py-8 md:space-y-10 md:py-12">
       <section className="grid gap-5 lg:grid-cols-[0.9fr_1.1fr]">
-        <div className="rounded-[1.05rem] border border-line bg-white/68 p-6 md:p-8">
+        <div className="surface-panel p-6 md:p-8">
           <p className="section-kicker">船员身份</p>
-          <h1 className="mt-5 text-4xl font-semibold tracking-tight text-foreground">
+          <h1 className="mt-5 text-[clamp(2.4rem,5vw,4.4rem)] font-serif leading-[0.98] tracking-[-0.05em] text-foreground">
             {userName ? `${userName} 的船员档案` : "登录后继承你的航线。"}
           </h1>
           <p className="mt-4 max-w-2xl text-sm leading-8 text-muted">
@@ -87,8 +87,8 @@ export function CrewProfile() {
             ["投稿数量", `${submissions.length} 条`],
             ["被采纳数量", `${stats.accepted} 条`],
           ].map(([label, value]) => (
-            <div key={label} className="rounded-[1rem] border border-line bg-white/62 p-5">
-              <Medal size={18} className="text-sky-700" />
+            <div key={label} className="surface-muted p-5">
+              <Medal size={18} className="text-accent" />
               <p className="mt-4 text-sm text-muted">{label}</p>
               <p className="mt-2 text-2xl font-semibold tracking-tight text-foreground">{value}</p>
             </div>
@@ -96,11 +96,11 @@ export function CrewProfile() {
         </div>
       </section>
 
-      <section className="rounded-[1.05rem] border border-line bg-background/62 p-6 md:p-8">
+      <section className="surface-muted p-6 md:p-8">
         <p className="section-kicker">身份字段预留</p>
         <div className="mt-5 grid gap-3 md:grid-cols-3">
           {["早期船员", "投稿者", "领航员", "大副", "船长", "远洋船长"].map((item) => (
-            <div key={item} className="rounded-[0.85rem] border border-line bg-white/58 p-4 text-sm text-muted">
+            <div key={item} className="rounded-[12px] border border-line bg-white/58 p-4 text-sm text-muted">
               {item}
             </div>
           ))}

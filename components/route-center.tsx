@@ -90,11 +90,11 @@ export function RouteCenter() {
   const androidLabel = androidBrandOptions.find((item) => item.id === selection.androidBrand)?.label;
 
   return (
-    <div className="page-shell space-y-8 py-10 md:py-14">
-      <section className="grid gap-6 lg:grid-cols-[0.85fr_1.15fr]">
-        <div className="rounded-[1.05rem] border border-line bg-white/66 p-6 md:p-8">
+    <div className="page-shell space-y-8 py-8 md:py-12">
+      <section className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
+        <div className="surface-panel p-6 md:p-8">
           <p className="section-kicker">航线推荐页</p>
-          <h1 className="mt-4 text-4xl font-semibold tracking-tight text-foreground">
+          <h1 className="mt-4 text-[clamp(2.3rem,4vw,4rem)] font-serif leading-[0.98] tracking-[-0.05em] text-foreground">
             你的第一条航线已生成。
           </h1>
           <p className="mt-4 max-w-2xl text-sm leading-8 text-muted">
@@ -123,13 +123,15 @@ export function RouteCenter() {
                 type="button"
                 onClick={() => setActiveRouteId(route.id)}
                 className={[
-                  "rounded-[1rem] border p-5 text-left transition-colors",
+                  "rounded-[14px] border p-5 text-left transition-colors",
                   selected ? tone.button : "border-line bg-white/58 hover:border-foreground",
                 ].join(" ")}
               >
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div>
-                    <p className="text-xs text-muted">{route.deviceLabel}</p>
+                    <p className="text-[11px] uppercase tracking-[0.18em] text-muted [font-family:var(--font-mono),monospace]">
+                      {route.deviceLabel}
+                    </p>
                     <h2 className="mt-2 text-2xl font-semibold tracking-tight text-foreground">
                       {route.name}
                     </h2>
@@ -153,7 +155,7 @@ export function RouteCenter() {
       </section>
 
       <section className="grid gap-6 lg:grid-cols-[17rem_minmax(0,1fr)]">
-        <aside className="rounded-[1rem] border border-line bg-white/60 p-5">
+        <aside className="surface-muted p-5">
           <p className="section-kicker">完成度</p>
           <p className="mt-4 text-5xl font-semibold tracking-tight text-foreground">
             {activeProgress}%
@@ -176,7 +178,7 @@ export function RouteCenter() {
 
         <div className="space-y-4">
           {activeRoute.segments.map((segment) => (
-            <article key={segment.id} className="rounded-[1rem] border border-line bg-white/64 p-5">
+            <article key={segment.id} className="surface-panel p-5">
               <div className="flex items-start gap-3">
                 <span className={`mt-2 inline-flex h-2.5 w-2.5 rounded-full ${toneClassMap[segment.tone].line}`} />
                 <div className="min-w-0 flex-1">
@@ -189,7 +191,7 @@ export function RouteCenter() {
                       const tone = toneClassMap[task.tone];
 
                       return (
-                        <div key={id} className="rounded-[0.9rem] border border-line bg-background/66 p-4">
+                        <div key={id} className="surface-muted p-4">
                           <div className="flex gap-3">
                             <button
                               type="button"

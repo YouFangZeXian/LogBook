@@ -50,18 +50,40 @@ const plans: {
 
 export function PlanComparisonTable() {
   return (
-    <section className="card overflow-hidden">
+    <section className="surface-panel overflow-hidden">
       <div className="border-b border-line px-6 py-5">
-        <h2 className="text-2xl font-semibold tracking-tight text-foreground">
-          订阅方案对比表
-        </h2>
-        <p className="mt-2 text-sm leading-7 text-muted">
-          先看自己更像哪类用户，再决定先订哪一个。
-        </p>
+        <h2 className="text-2xl font-semibold tracking-tight text-foreground">订阅方案对比表</h2>
+        <p className="mt-2 text-sm leading-7 text-muted">先看自己更像哪类用户，再决定先订哪一个。</p>
       </div>
-      <div className="overflow-x-auto">
+
+      <div className="grid gap-px bg-line md:hidden">
+        {plans.map((plan) => {
+          const tone = toneClassMap[plan.tone];
+
+          return (
+            <article key={plan.name} className="bg-white p-5">
+              <div className="flex items-start justify-between gap-3">
+                <div className="space-y-3">
+                  <BrandMark brand={plan.brand} size="sm" />
+                  <h3 className="text-lg font-semibold tracking-tight text-foreground">{plan.name}</h3>
+                </div>
+                <span className={`rounded-full px-2.5 py-1 text-[10px] uppercase tracking-[0.18em] ${tone.badge}`}>
+                  {plan.price}
+                </span>
+              </div>
+              <div className="mt-4 space-y-3 text-sm leading-7">
+                <p><span className="font-medium text-foreground">适合人群：</span><span className="text-muted">{plan.audience}</span></p>
+                <p><span className="font-medium text-foreground">优点：</span><span className="text-muted">{plan.pros}</span></p>
+                <p><span className="font-medium text-foreground">限制：</span><span className="text-muted">{plan.limits}</span></p>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+
+      <div className="hidden overflow-x-auto md:block">
         <table className="min-w-full text-left text-sm">
-          <thead className="bg-soft text-foreground">
+          <thead className="bg-background/66 text-foreground">
             <tr>
               <th className="px-6 py-4 font-semibold">方案</th>
               <th className="px-6 py-4 font-semibold">价格</th>
@@ -75,24 +97,25 @@ export function PlanComparisonTable() {
               const tone = toneClassMap[plan.tone];
 
               return (
-              <tr key={plan.name} className="border-t border-line align-top">
-                <td className="px-6 py-4">
-                  <div className="space-y-3">
-                    <BrandMark brand={plan.brand} size="sm" />
-                    <p className="font-medium text-foreground">{plan.name}</p>
-                  </div>
-                </td>
-                <td className="px-6 py-4 text-muted">{plan.price}</td>
-                <td className="px-6 py-4 text-muted">{plan.audience}</td>
-                <td className="px-6 py-4">
-                  <span className={`inline-flex rounded-full px-2.5 py-1 text-[10px] uppercase tracking-[0.22em] ${tone.badge}`}>
-                    优点
-                  </span>
-                  <p className="mt-3 text-muted">{plan.pros}</p>
-                </td>
-                <td className="px-6 py-4 text-muted">{plan.limits}</td>
-              </tr>
-            )})}
+                <tr key={plan.name} className="border-t border-line align-top">
+                  <td className="px-6 py-4">
+                    <div className="space-y-3">
+                      <BrandMark brand={plan.brand} size="sm" />
+                      <p className="font-medium text-foreground">{plan.name}</p>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 text-muted">{plan.price}</td>
+                  <td className="px-6 py-4 text-muted">{plan.audience}</td>
+                  <td className="px-6 py-4">
+                    <span className={`inline-flex rounded-full px-2.5 py-1 text-[10px] uppercase tracking-[0.18em] ${tone.badge}`}>
+                      优点
+                    </span>
+                    <p className="mt-3 text-muted">{plan.pros}</p>
+                  </td>
+                  <td className="px-6 py-4 text-muted">{plan.limits}</td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>

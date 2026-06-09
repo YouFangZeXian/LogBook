@@ -119,7 +119,7 @@ export function DeviceDock() {
   };
 
   return (
-    <section className="rounded-[1.05rem] border border-line bg-white/62 p-6 md:p-8">
+    <section className="surface-panel p-6 md:p-8">
       <div className="grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
         <div>
           <p className="section-kicker">设备舱</p>
@@ -223,7 +223,7 @@ export function DeviceDock() {
               return (
                 <article
                   key={device.id}
-                  className="rounded-[0.95rem] border border-line bg-background/70 p-4"
+                  className="surface-muted p-4"
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex items-start gap-3">
@@ -270,7 +270,7 @@ export function DeviceDock() {
               );
             })
           ) : (
-            <div className="rounded-[0.95rem] border border-dashed border-line bg-background/50 p-6 text-sm leading-7 text-muted">
+            <div className="rounded-[14px] border border-dashed border-line bg-background/50 p-6 text-sm leading-7 text-muted">
               还没有设备卡片。先添加一台主力设备，后面航线推荐会更像是为你生成的。
             </div>
           )}

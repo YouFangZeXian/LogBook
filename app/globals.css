@@ -2,22 +2,22 @@
 @plugin "@tailwindcss/typography";
 
 :root {
-  --background: #f3efe7;
-  --background-soft: #ece7dc;
-  --foreground: #121212;
-  --card: rgba(255, 255, 255, 0.58);
-  --card-strong: rgba(255, 255, 255, 0.84);
-  --muted: #655f58;
-  --line: rgba(18, 18, 18, 0.14);
-  --line-strong: rgba(18, 18, 18, 0.28);
-  --soft: rgba(16, 16, 16, 0.035);
-  --accent: #3d6cff;
-  --accent-strong: #2449c5;
-  --accent-soft: rgba(61, 108, 255, 0.12);
-  --success: #2a9060;
-  --success-soft: rgba(42, 144, 96, 0.12);
-  --warning: #b46c1f;
-  --warning-soft: rgba(180, 108, 31, 0.12);
+  --background: #f6f4ef;
+  --background-soft: #efebe3;
+  --foreground: #141311;
+  --card: rgba(255, 255, 255, 0.72);
+  --card-strong: rgba(255, 255, 255, 0.9);
+  --muted: #666056;
+  --line: rgba(20, 19, 17, 0.1);
+  --line-strong: rgba(20, 19, 17, 0.18);
+  --soft: rgba(20, 19, 17, 0.028);
+  --accent: #2957bf;
+  --accent-strong: #1e4291;
+  --accent-soft: rgba(41, 87, 191, 0.08);
+  --success: #2957bf;
+  --success-soft: rgba(41, 87, 191, 0.08);
+  --warning: #2957bf;
+  --warning-soft: rgba(41, 87, 191, 0.08);
   --font-mono: var(--font-ibm-plex-mono);
 }
 
@@ -58,9 +58,9 @@ body {
   font-family: var(--font-noto-sans-sc), sans-serif;
   text-rendering: optimizeLegibility;
   background:
-    radial-gradient(circle at 18% 14%, rgba(255, 217, 161, 0.2), transparent 19%),
-    radial-gradient(circle at 82% 12%, rgba(79, 136, 255, 0.1), transparent 16%),
-    linear-gradient(180deg, #f7f4ec 0%, #f2ede2 54%, #ebe5d8 100%);
+    radial-gradient(circle at 14% 8%, rgba(41, 87, 191, 0.06), transparent 24%),
+    radial-gradient(circle at 84% 10%, rgba(165, 149, 121, 0.08), transparent 20%),
+    linear-gradient(180deg, #faf8f3 0%, #f4f1e8 48%, #efebe2 100%);
 }
 
 body::before {
@@ -69,15 +69,15 @@ body::before {
   inset: 0;
   pointer-events: none;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.32), rgba(255, 255, 255, 0)),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0)),
     repeating-linear-gradient(
       0deg,
-      rgba(18, 18, 18, 0.012) 0,
-      rgba(18, 18, 18, 0.012) 1px,
+      rgba(20, 19, 17, 0.01) 0,
+      rgba(20, 19, 17, 0.01) 1px,
       transparent 1px,
-      transparent 36px
+      transparent 34px
     );
-  opacity: 0.42;
+  opacity: 0.32;
 }
 
 a {
@@ -102,23 +102,23 @@ select {
 }
 
 .page-shell {
-  @apply mx-auto w-full max-w-[92rem] px-5 sm:px-7 lg:px-10;
+  @apply mx-auto w-full max-w-[92rem] px-4 sm:px-6 lg:px-10;
 }
 
 .glass-card {
-  @apply rounded-[16px] border border-line bg-card shadow-[0_20px_48px_-40px_rgba(18,18,18,0.16)];
+  @apply rounded-[14px] border border-line bg-card shadow-[0_18px_48px_-42px_rgba(20,19,17,0.12)];
 }
 
 .glass-card-strong {
-  @apply rounded-[18px] border border-line-strong bg-card-strong shadow-[0_24px_54px_-42px_rgba(18,18,18,0.16)];
+  @apply rounded-[14px] border border-line-strong bg-card-strong shadow-[0_20px_52px_-44px_rgba(20,19,17,0.12)];
 }
 
 .card {
-  @apply rounded-[16px] border border-line bg-card shadow-[0_20px_48px_-40px_rgba(18,18,18,0.16)];
+  @apply rounded-[14px] border border-line bg-card shadow-[0_18px_48px_-42px_rgba(20,19,17,0.12)];
 }
 
 .eyebrow {
-  @apply inline-flex items-center text-[11px] font-medium uppercase tracking-[0.26em] text-muted;
+  @apply inline-flex items-center text-[11px] font-medium uppercase tracking-[0.22em] text-muted;
   font-family: var(--font-mono), monospace;
 }
 
@@ -128,7 +128,7 @@ select {
 }
 
 .section-kicker {
-  @apply text-[11px] font-medium uppercase tracking-[0.24em] text-muted;
+  @apply text-[11px] font-medium uppercase tracking-[0.2em] text-muted;
   font-family: var(--font-mono), monospace;
 }
 
@@ -138,15 +138,23 @@ select {
 }
 
 .button-primary {
-  @apply inline-flex items-center justify-center rounded-full border border-foreground bg-foreground px-5 py-3 text-sm font-medium text-background transition-transform duration-200 hover:-translate-y-0.5 hover:bg-black;
+  @apply inline-flex items-center justify-center rounded-[10px] border border-foreground bg-foreground px-5 py-3 text-sm font-medium text-background transition-transform duration-200 hover:-translate-y-0.5 hover:bg-black;
 }
 
 .button-secondary {
-  @apply inline-flex items-center justify-center rounded-full border border-line-strong bg-transparent px-5 py-3 text-sm font-medium text-foreground transition-transform duration-200 hover:-translate-y-0.5 hover:border-foreground hover:bg-white/40;
+  @apply inline-flex items-center justify-center rounded-[10px] border border-line-strong bg-transparent px-5 py-3 text-sm font-medium text-foreground transition-transform duration-200 hover:-translate-y-0.5 hover:border-foreground hover:bg-white/45;
 }
 
 .soft-divider {
   @apply border-t border-line/70;
+}
+
+.surface-panel {
+  @apply rounded-[14px] border border-line bg-white/74;
+}
+
+.surface-muted {
+  @apply rounded-[14px] border border-line bg-background/66;
 }
 
 .hide-scrollbar {
