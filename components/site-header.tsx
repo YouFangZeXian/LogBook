@@ -4,7 +4,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { List, MagnifyingGlass, SidebarSimple } from "@phosphor-icons/react/dist/ssr";
+import {
+  List,
+  MagnifyingGlass,
+  Moon,
+  SidebarSimple,
+  SunDim,
+} from "@phosphor-icons/react/dist/ssr";
 
 import { getCurrentLogbookUser, requestLogbookLogin } from "@/components/auth-dialog";
 import { siteConfig } from "@/lib/site";
@@ -14,6 +20,8 @@ type SiteHeaderProps = {
   onOpenSidebar: () => void;
   onToggleSidebar: () => void;
   sidebarCollapsed: boolean;
+  theme: "light" | "dark";
+  onToggleTheme: () => void;
 };
 
 const pageTitleMap: Record<string, string> = {
@@ -35,6 +43,8 @@ export function SiteHeader({
   onOpenSidebar,
   onToggleSidebar,
   sidebarCollapsed,
+  theme,
+  onToggleTheme,
 }: SiteHeaderProps) {
   const pathname = usePathname();
   const [userName, setUserName] = useState("");
@@ -112,6 +122,20 @@ export function SiteHeader({
           </div>
 
           <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={onToggleTheme}
+              className="button-secondary px-3 py-2.5 sm:px-4 sm:py-3"
+              aria-label={theme === "light" ? "切换到夜间模式" : "切换到日间模式"}
+              title={theme === "light" ? "切换到夜间模式" : "切换到日间模式"}
+            >
+              {theme === "light" ? (
+                <Moon size={16} className="sm:mr-2" />
+              ) : (
+                <SunDim size={16} className="sm:mr-2" />
+              )}
+              <span className="hidden sm:inline">{theme === "light" ? "夜间" : "日间"}</span>
+            </button>
             <button type="button" onClick={onOpenSearch} className="button-secondary px-3 py-2.5 sm:px-5 sm:py-3">
               <MagnifyingGlass size={16} className="sm:mr-2" />
               <span className="hidden sm:inline">搜索</span>

@@ -1,32 +1,11 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Mono, Noto_Sans_SC, Noto_Serif_SC } from "next/font/google";
+import Script from "next/script";
 
 import "./globals.css";
 
 import { SiteShell } from "@/components/site-shell";
 import { getSearchEntries } from "@/lib/content";
 import { buildMetadata, siteConfig } from "@/lib/site";
-
-const notoSansSC = Noto_Sans_SC({
-  variable: "--font-noto-sans-sc",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  display: "swap",
-});
-
-const notoSerifSC = Noto_Serif_SC({
-  variable: "--font-noto-serif-sc",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  display: "swap",
-});
-
-const ibmPlexMono = IBM_Plex_Mono({
-  variable: "--font-ibm-plex-mono",
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   ...buildMetadata({
@@ -52,10 +31,28 @@ export default function RootLayout({
   const searchEntries = getSearchEntries();
 
   return (
-    <html
-      lang="zh-CN"
-      className={`${notoSansSC.variable} ${notoSerifSC.variable} ${ibmPlexMono.variable}`}
-    >
+    <html lang="zh-CN">
+      <head>
+        <Script
+          id="logbook-theme-init"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function () {
+                try {
+                  var key = 'logbook.theme';
+                  var stored = window.localStorage.getItem(key);
+                  var systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                  var theme = stored || (systemDark ? 'dark' : 'light');
+                  document.documentElement.setAttribute('data-theme', theme);
+                } catch (error) {
+                  document.documentElement.setAttribute('data-theme', 'light');
+                }
+              })();
+            `,
+          }}
+        />
+      </head>
       <body className="min-h-screen bg-background text-foreground">
         <SiteShell searchEntries={searchEntries}>{children}</SiteShell>
       </body>
