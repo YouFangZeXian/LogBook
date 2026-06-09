@@ -8,6 +8,7 @@ import { SearchDrawer } from "@/components/search-drawer";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { SiteSidebar } from "@/components/site-sidebar";
+import { WelcomeDialog } from "@/components/welcome-dialog";
 
 type SiteShellProps = {
   children: React.ReactNode;
@@ -40,11 +41,8 @@ export function SiteShell({ children, searchEntries }: SiteShellProps) {
 
   return (
     <>
-      <SearchDrawer
-        entries={searchEntries}
-        open={searchOpen}
-        onClose={() => setSearchOpen(false)}
-      />
+      <WelcomeDialog />
+      <SearchDrawer entries={searchEntries} open={searchOpen} onClose={() => setSearchOpen(false)} />
       <AuthDialog />
       <div className="min-h-screen lg:grid lg:grid-cols-[auto_minmax(0,1fr)]">
         <SiteSidebar
