@@ -36,7 +36,7 @@ export const siteConfig = {
   name: "路格舶-舶来四海之物",
   shortName: "路格舶",
   title: "路格舶-舶来四海之物 | 订阅、支付与工具避坑",
-  motto: "寻未知路；格世界物；舶沧海途。",
+  motto: "寻未知路；格世界物；舶四海途。",
   logline: "记录 AI 时代的舶海日志。",
   description:
     "ChatGPT、Claude、Cursor、美区 Apple ID、海外支付、订阅避坑，一站式整理，帮学生和个人开发者少踩坑、少花冤枉钱。",

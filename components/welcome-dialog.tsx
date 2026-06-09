@@ -65,7 +65,7 @@ export function WelcomeDialog() {
             <br />
             格世界物；
             <br />
-            舶沧海途。
+            舶四海途。
           </h2>
           <p className="mt-3 text-sm leading-6 text-muted">
             AI 时代的设备出海新手村与船员航海日志社区。
