@@ -136,26 +136,19 @@ export function SiteHeader({
           </button>
 
           {userName ? (
+            <span className="hidden rounded-[10px] px-3 py-1.5 text-sm font-medium text-brand-sea/70 select-none sm:inline-flex items-center gap-1.5">
+              <span className="h-1.5 w-1.5 rounded-full bg-success" />
+              您已登船
+            </span>
+          ) : (
             <button
               type="button"
-              onClick={() => {
-                window.localStorage.removeItem("logbook.auth.user");
-                window.dispatchEvent(new Event("logbook-auth-changed"));
-              }}
-              className="hidden rounded-[10px] px-3 py-1.5 text-sm font-medium text-muted transition-all duration-200 hover:bg-black/5 hover:text-foreground sm:block"
-              title="退出"
+              onClick={() => requestLogbookLogin()}
+              className="btn-primary px-4 py-2 text-sm font-medium transition-all duration-200 hover:shadow-md active:scale-95"
             >
-              {userName}
+              登船
             </button>
-          ) : null}
-
-          <button
-            type="button"
-            onClick={() => requestLogbookLogin()}
-            className="btn-primary px-4 py-2 text-sm font-medium transition-all duration-200 hover:shadow-md active:scale-95"
-          >
-            登船
-          </button>
+          )}
         </div>
       </div>
     </header>
