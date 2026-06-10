@@ -2,45 +2,61 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { ArrowsLeftRight, BookOpenText, Compass, House, Info, Lifebuoy, ListDashes, Package, PenNibStraight, RocketLaunch, Sparkle, UserCircle, Wrench, X } from "@phosphor-icons/react/dist/ssr";
+import {
+  Compass,
+  Info,
+  PenNibStraight,
+  UserCircle,
+  Wrench,
+} from "@phosphor-icons/react/dist/ssr";
 
 import { getCurrentLogbookUser, requestLogbookLogin } from "@/components/auth-dialog";
-import { siteConfig, type NavItem } from "@/lib/site";
+import { NavMain, type NavMainItem } from "@/components/nav-main";
+import { NavSecondary, type NavSecondaryItem } from "@/components/nav-secondary";
+import { siteConfig } from "@/lib/site";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from "@/components/ui/sidebar";
 
-type SiteSidebarProps = {
-  open: boolean;
-  collapsed: boolean;
-  onClose: () => void;
-  onToggleCollapse: () => void;
+/* ── 将 siteConfig.navSections 转换为 NavMain 的可折叠分组格式 ── */
+
+const sectionIcons: Record<string, React.ReactNode> = {
+  "主航道": <Compass size={18} weight="duotone" />,
+  "工具与补给": <Wrench size={18} weight="duotone" />,
+  "日志与船员": <PenNibStraight size={18} weight="duotone" />,
 };
 
-const iconMap: Record<string, typeof House> = {
-  "/": House, "/start": RocketLaunch, "/routes": Compass,
-  "/category": ListDashes, "/tools": Wrench, "/resources": Lifebuoy,
-  "/discoveries": Sparkle, "/products": Package, "/contribute": PenNibStraight,
-  "/crew": UserCircle, "/about": Info,
-};
+const navMainItems: NavMainItem[] = siteConfig.navSections.map((section) => ({
+  title: section.title,
+  href: section.items[0]?.href ?? "#",
+  icon: sectionIcons[section.title] ?? <Compass size={18} weight="duotone" />,
+  isActive: false, // auto-detected by NavMain via pathname
+  items: section.items.map((item) => ({
+    label: item.label,
+    href: item.href,
+  })),
+}));
 
-function SidebarLink({ item, collapsed, pathname, onNavigate }: { item: NavItem; collapsed: boolean; pathname: string; onNavigate?: () => void }) {
-  const Icon = iconMap[item.href] ?? BookOpenText;
-  const active = item.href === "/" ? pathname === "/" : pathname === item.href || pathname.startsWith(`${item.href}/`);
-  return (
-    <Link href={item.href} onClick={onNavigate} aria-current={active ? "page" : undefined}
-      className={`flex items-center gap-3 rounded-[12px] px-3 py-2.5 text-sm font-medium transition-colors ${
-        collapsed ? "justify-center px-2.5" : ""
-      } ${
-        active ? "bg-brand text-white" : "text-muted hover:bg-black/5 hover:text-foreground"
-      }`}>
-      <Icon size={17} weight={active ? "fill" : "regular"} />
-      {!collapsed ? <span className="truncate">{item.label}</span> : null}
-    </Link>
-  );
-}
+/* ── 次要导航 ── */
 
-function SidebarContent({ collapsed, mobile, onNavigate, onToggleCollapse }: { collapsed: boolean; mobile?: boolean; onNavigate?: () => void; onToggleCollapse: () => void }) {
-  const pathname = usePathname();
+const navSecondaryItems: NavSecondaryItem[] = [
+  {
+    title: "关于",
+    href: "/about",
+    icon: <Info size={16} weight="duotone" />,
+  },
+];
+
+/* ── 用户区块（侧边栏底部） ── */
+
+function SidebarUserFooter() {
   const [userName, setUserName] = useState("");
   const [userEmail, setUserEmail] = useState("");
 
@@ -56,86 +72,65 @@ function SidebarContent({ collapsed, mobile, onNavigate, onToggleCollapse }: { c
   }, []);
 
   return (
-    <div className="flex h-full flex-col">
-      <div className={`border-b border-border px-3 py-3 ${collapsed && !mobile ? "px-2.5" : ""}`}>
-        <div className={`flex items-center gap-3 ${collapsed && !mobile ? "justify-center" : ""}`}>
-          <Link href="/" onClick={onNavigate} className="flex min-w-0 items-center gap-3">
-            <span className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-[12px] border border-border bg-white">
-              <Image src="/logo-mark.png" alt="路格舶" width={36} height={36} className="h-full w-full object-cover" priority />
-            </span>
-            {!collapsed || mobile ? (
-              <span className="min-w-0">
-                <span className="block text-[11px] uppercase tracking-[0.12em] text-faint [font-family:var(--font-mono)]">Logbook.today</span>
-                <span className="block truncate text-sm font-semibold text-foreground">{siteConfig.shortName}</span>
-              </span>
-            ) : null}
-          </Link>
-          {!mobile ? (
-            <button type="button" onClick={onToggleCollapse}
-              className="ml-auto inline-flex h-8 w-8 items-center justify-center rounded-[10px] text-faint transition-colors hover:bg-black/5"
-              aria-label={collapsed ? "展开" : "收起"}>
-              <ArrowsLeftRight size={16} />
-            </button>
-          ) : null}
-        </div>
-        {!collapsed || mobile ? <p className="mt-3 text-xs leading-6 text-muted">{siteConfig.logline}</p> : null}
-      </div>
-
-      <div className="hide-scrollbar flex-1 overflow-y-auto px-3 py-4">
-        <div className="space-y-5">
-          {siteConfig.navSections.map((section) => (
-            <div key={section.title} className="space-y-1.5">
-              {!collapsed || mobile ? <p className="kicker px-1">{section.title}</p> : null}
-              {section.items.map((item) => (
-                <SidebarLink key={item.href} item={item} pathname={pathname} collapsed={collapsed && !mobile} onNavigate={onNavigate} />
-              ))}
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className={`border-t border-border px-3 py-3 ${collapsed && !mobile ? "px-2.5" : ""}`}>
-        <button type="button" onClick={() => requestLogbookLogin()}
-          className={`flex w-full items-center gap-3 rounded-[12px] border border-border bg-white px-3 py-2.5 text-left transition-colors hover:bg-background-secondary ${
-            collapsed && !mobile ? "justify-center px-2.5" : ""
-          }`}>
-          <UserCircle size={17} weight="duotone" className="text-muted" />
-          {!collapsed || mobile ? (
-            <span className="min-w-0">
-              <span className="block truncate text-sm font-medium text-foreground">{userName || "登录 / 船员档案"}</span>
-              <span className="block truncate text-xs text-muted">{userEmail || "保存航线与投稿记录"}</span>
-            </span>
-          ) : null}
-        </button>
-      </div>
-    </div>
+    <button
+      type="button"
+      onClick={() => requestLogbookLogin()}
+      className="flex w-full items-center gap-3 rounded-[12px] border border-sidebar-border bg-sidebar px-3 py-2.5 text-left transition-colors hover:bg-sidebar-accent"
+    >
+      <UserCircle size={17} weight="duotone" className="text-muted-foreground shrink-0" />
+      <span className="min-w-0">
+        <span className="block truncate text-sm font-medium text-sidebar-foreground">
+          {userName || "登录 / 船员档案"}
+        </span>
+        <span className="block truncate text-xs text-muted-foreground">
+          {userEmail || "保存航线与投稿记录"}
+        </span>
+      </span>
+    </button>
   );
 }
 
-export function SiteSidebar({ open, collapsed, onClose, onToggleCollapse }: SiteSidebarProps) {
-  return (
-    <>
-      <aside className={`hidden border-r border-border bg-white lg:flex lg:min-h-screen lg:flex-col ${collapsed ? "lg:w-[88px]" : "lg:w-[268px]"}`}>
-        <div className="sticky top-0 h-screen">
-          <SidebarContent collapsed={collapsed} onToggleCollapse={onToggleCollapse} />
-        </div>
-      </aside>
+/* ── 入口组件 ── */
 
-      {open ? (
-        <div className="fixed inset-0 z-50 lg:hidden">
-          <button type="button" onClick={onClose} className="absolute inset-0 bg-black/25 backdrop-blur-sm" aria-label="关闭菜单" />
-          <aside className="absolute inset-y-0 left-0 w-[86vw] max-w-[300px] border-r border-border bg-white">
-            <div className="flex items-center justify-end border-b border-border px-3 py-3">
-              <button type="button" onClick={onClose} className="inline-flex h-8 w-8 items-center justify-center rounded-[10px] text-faint hover:bg-black/5" aria-label="关闭">
-                <X size={16} />
-              </button>
-            </div>
-            <div className="h-[calc(100%-57px)]">
-              <SidebarContent collapsed={false} mobile onNavigate={onClose} onToggleCollapse={onToggleCollapse} />
-            </div>
-          </aside>
-        </div>
-      ) : null}
-    </>
+export function SiteSidebar() {
+  return (
+    <Sidebar variant="inset" collapsible="icon">
+      {/* ── 品牌头部 ── */}
+      <SidebarHeader className="pb-0">
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton size="lg" render={<Link href="/" />}>
+              <div className="flex aspect-square size-8 items-center justify-center overflow-hidden rounded-lg bg-sidebar-primary">
+                <Image
+                  src="/logo-mark.png"
+                  alt="路格舶"
+                  width={28}
+                  height={28}
+                  className="size-full object-cover"
+                  priority
+                />
+              </div>
+              <div className="grid flex-1 text-left text-sm leading-tight">
+                <span className="truncate font-medium">{siteConfig.shortName}</span>
+                <span className="truncate text-xs text-muted-foreground">
+                  {siteConfig.logline}
+                </span>
+              </div>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarHeader>
+
+      {/* ── 可滚动内容：主导航 + 次要导航 ── */}
+      <SidebarContent>
+        <NavMain items={navMainItems} />
+        <NavSecondary items={navSecondaryItems} className="mt-auto" />
+      </SidebarContent>
+
+      {/* ── 底部用户入口 ── */}
+      <SidebarFooter>
+        <SidebarUserFooter />
+      </SidebarFooter>
+    </Sidebar>
   );
 }

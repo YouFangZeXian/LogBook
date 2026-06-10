@@ -3,9 +3,14 @@ import Script from "next/script";
 
 import "./globals.css";
 
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { SiteShell } from "@/components/site-shell";
 import { getSearchEntries } from "@/lib/content";
 import { buildMetadata, siteConfig } from "@/lib/site";
+import { Geist } from "next/font/google";
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 export const metadata: Metadata = {
   ...buildMetadata({
@@ -31,7 +36,7 @@ export default function RootLayout({
   const searchEntries = getSearchEntries();
 
   return (
-    <html lang="zh-CN">
+    <html lang="zh-CN" className={cn("font-sans", geist.variable)}>
       <head>
         <Script
           id="logbook-theme-init"
@@ -54,7 +59,9 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen bg-background text-foreground">
-        <SiteShell searchEntries={searchEntries}>{children}</SiteShell>
+        <TooltipProvider>
+          <SiteShell searchEntries={searchEntries}>{children}</SiteShell>
+        </TooltipProvider>
       </body>
     </html>
   );

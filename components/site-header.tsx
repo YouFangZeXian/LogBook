@@ -4,16 +4,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { List, MagnifyingGlass } from "@phosphor-icons/react/dist/ssr";
+import { MagnifyingGlass } from "@phosphor-icons/react/dist/ssr";
 
 import { getCurrentLogbookUser, requestLogbookLogin } from "@/components/auth-dialog";
 import { siteConfig } from "@/lib/site";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 
 type SiteHeaderProps = {
   onOpenSearch: () => void;
-  onOpenSidebar: () => void;
-  onToggleSidebar: () => void;
-  sidebarCollapsed: boolean;
 };
 
 const pageTitleMap: Record<string, string> = {
@@ -32,7 +30,6 @@ const pageTitleMap: Record<string, string> = {
 
 export function SiteHeader({
   onOpenSearch,
-  onOpenSidebar,
 }: SiteHeaderProps) {
   const pathname = usePathname();
   const [userName, setUserName] = useState("");
@@ -73,14 +70,7 @@ export function SiteHeader({
         {/* Left */}
         <div className="flex min-w-0 items-center gap-3">
           {/* Mobile menu trigger */}
-          <button
-            type="button"
-            onClick={onOpenSidebar}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-[10px] text-muted transition-colors hover:bg-black/5 hover:text-foreground lg:hidden"
-            aria-label="打开菜单"
-          >
-            <List size={18} />
-          </button>
+          <SidebarTrigger className="inline-flex h-9 w-9 items-center justify-center rounded-[10px] text-muted transition-colors hover:bg-black/5 hover:text-foreground lg:hidden" />
 
           {/* Logo */}
           <Link href="/" className="flex shrink-0 items-center gap-2.5">
