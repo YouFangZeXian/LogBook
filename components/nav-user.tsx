@@ -1,5 +1,6 @@
 "use client"
 
+import { useRouter } from "next/navigation";
 import {
   Avatar,
   AvatarFallback,
@@ -38,6 +39,7 @@ export function NavUser({
   }
 }) {
   const { isMobile } = useSidebar()
+  const router = useRouter()
 
   return (
     <SidebarMenu>
@@ -85,7 +87,7 @@ export function NavUser({
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => router.push("/crew")}>
                 <UserCircle size={16} weight="duotone" />
                 船员档案
               </DropdownMenuItem>

@@ -4,15 +4,14 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import {
   Compass,
-  Info,
   PenNibStraight,
   UserCircle,
   Wrench,
 } from "@phosphor-icons/react/dist/ssr";
 
-import { getCurrentLogbookUser, requestLogbookLogin } from "@/components/auth-dialog";
+import { useRouter } from "next/navigation";
+import { getCurrentLogbookUser } from "@/components/auth-dialog";
 import { NavMain, type NavMainItem } from "@/components/nav-main";
-import { NavSecondary, type NavSecondaryItem } from "@/components/nav-secondary";
 import { NavUser } from "@/components/nav-user";
 import { siteConfig } from "@/lib/site";
 import {
@@ -44,20 +43,11 @@ const navMainItems: NavMainItem[] = siteConfig.navSections.map((section) => ({
   })),
 }));
 
-/* ── 次要导航 ── */
-
-const navSecondaryItems: NavSecondaryItem[] = [
-  {
-    title: "关于",
-    href: "/about",
-    icon: <Info size={16} weight="duotone" />,
-  },
-];
-
 /* ── 入口组件 ── */
 
 export function SiteSidebar() {
   const [user, setUser] = useState<{ name: string; email: string; avatar: string } | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const sync = () => {
@@ -93,7 +83,6 @@ export function SiteSidebar() {
       {/* ── 可滚动内容：主导航 + 次要导航 ── */}
       <SidebarContent>
         <NavMain items={navMainItems} />
-        <NavSecondary items={navSecondaryItems} className="mt-auto" />
       </SidebarContent>
 
       {/* ── 底部用户区 ── */}
@@ -105,7 +94,7 @@ export function SiteSidebar() {
             <SidebarMenuItem>
               <SidebarMenuButton
                 size="lg"
-                onClick={() => requestLogbookLogin()}
+                onClick={() => router.push("/login")}
                 className="w-full"
               >
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
