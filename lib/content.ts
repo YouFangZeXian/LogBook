@@ -267,17 +267,17 @@ export function getSearchEntries(): SearchEntry[] {
     },
     {
       type: "page",
-      title: "工具页",
-      description: "订阅成本计算器、礼品卡折扣计算器和方案对比。",
+      title: "船坞 — AI 工具发现",
+      description: "按玩法分类发现 AI 工具：AI 开发、搜索、音乐、视频、设计、办公、自动化、变现和海外服务。",
       href: "/tools",
-      keywords: ["计算器", "对比", "工具"],
+      keywords: ["工具发现", "AI工具", "船坞", "分类", "AI开发"],
     },
     {
       type: "page",
-      title: "资源页",
-      description: "推荐工具、支付方案和教程入口。",
+      title: "补给站 — 账号、支付、订阅",
+      description: "解决海外 AI 工具的账号注册、支付方式、订阅方案和常见问题。",
       href: "/resources",
-      keywords: ["资源", "推荐", "支付"],
+      keywords: ["账号", "支付", "订阅", "补给", "Apple ID"],
     },
     {
       type: "page",

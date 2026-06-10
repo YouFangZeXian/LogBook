@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { MagnifyingGlass, MoonStars, Sun } from "@phosphor-icons/react/dist/ssr";
 
-import { getCurrentLogbookUser } from "@/components/auth-dialog";
+import { getCurrentLogbookUser, requestLogbookLogin } from "@/components/auth-dialog";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 
@@ -149,12 +149,13 @@ export function SiteHeader({
             </button>
           ) : null}
 
-          <Link
-            href="/login"
+          <button
+            type="button"
+            onClick={() => requestLogbookLogin()}
             className="btn-primary px-4 py-2 text-sm font-medium transition-all duration-200 hover:shadow-md active:scale-95"
           >
             登船
-          </Link>
+          </button>
         </div>
       </div>
     </header>

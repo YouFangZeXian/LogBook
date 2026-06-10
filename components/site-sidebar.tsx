@@ -9,8 +9,7 @@ import {
   Wrench,
 } from "@phosphor-icons/react/dist/ssr";
 
-import { useRouter } from "next/navigation";
-import { getCurrentLogbookUser } from "@/components/auth-dialog";
+import { getCurrentLogbookUser, requestLogbookLogin } from "@/components/auth-dialog";
 import { NavMain, type NavMainItem } from "@/components/nav-main";
 import { NavUser } from "@/components/nav-user";
 import { siteConfig } from "@/lib/site";
@@ -47,7 +46,6 @@ const navMainItems: NavMainItem[] = siteConfig.navSections.map((section) => ({
 
 export function SiteSidebar() {
   const [user, setUser] = useState<{ name: string; email: string; avatar: string } | null>(null);
-  const router = useRouter();
 
   useEffect(() => {
     const sync = () => {
@@ -80,7 +78,7 @@ export function SiteSidebar() {
         </SidebarMenu>
       </SidebarHeader>
 
-      {/* ── 可滚动内容：主导航 + 次要导航 ── */}
+      {/* ── 可滚动内容：主导航 ── */}
       <SidebarContent>
         <NavMain items={navMainItems} />
       </SidebarContent>
@@ -94,7 +92,7 @@ export function SiteSidebar() {
             <SidebarMenuItem>
               <SidebarMenuButton
                 size="lg"
-                onClick={() => router.push("/login")}
+                onClick={() => requestLogbookLogin()}
                 className="w-full"
               >
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
