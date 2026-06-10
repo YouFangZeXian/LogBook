@@ -34,7 +34,7 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
 
   return (
     <SidebarGroup>
-      <SidebarGroupLabel className="text-[11px] tracking-[0.18em] [font-family:var(--font-mono)]">NAVIGATION</SidebarGroupLabel>
+      <SidebarGroupLabel>导航</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => {
           const hasSub = !!item.items?.length;
