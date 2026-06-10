@@ -80,11 +80,11 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
               >
                 {item.icon}
                 <span>{item.title}</span>
-                <SidebarMenuAction className="pointer-events-none [&>svg]:transition-transform [&>svg]:duration-200">
+                <SidebarMenuAction className="pointer-events-none">
                   <CaretRight
                     size={14}
                     weight="bold"
-                    className="ml-auto transition-transform duration-200 group-data-[open=true]/collapsible:rotate-90"
+                    className="nav-group-caret ml-auto transition-transform duration-200"
                   />
                 </SidebarMenuAction>
               </CollapsibleTrigger>
