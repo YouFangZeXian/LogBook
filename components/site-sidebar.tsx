@@ -14,6 +14,7 @@ import {
 import { getCurrentLogbookUser, requestLogbookLogin } from "@/components/auth-dialog";
 import { NavMain, type NavMainItem } from "@/components/nav-main";
 import { NavSecondary, type NavSecondaryItem } from "@/components/nav-secondary";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { siteConfig } from "@/lib/site";
 import {
   Sidebar,
@@ -100,7 +101,7 @@ export function SiteSidebar() {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" render={<Link href="/" />}>
-              <div className="flex aspect-square size-8 items-center justify-center overflow-hidden rounded-lg bg-sidebar-primary">
+              <div className="flex aspect-square size-8 items-center justify-center overflow-hidden rounded-lg bg-brand-mist">
                 <Image
                   src="/logo-mark.png"
                   alt="路格舶"
@@ -121,9 +122,12 @@ export function SiteSidebar() {
         </SidebarMenu>
       </SidebarHeader>
 
-      {/* ── 可滚动内容：主导航 + 次要导航 ── */}
+      {/* ── 可滚动内容：主导航 + 主题切换 + 次要导航 ── */}
       <SidebarContent>
         <NavMain items={navMainItems} />
+        <div className="px-2 mt-2">
+          <ThemeToggle />
+        </div>
         <NavSecondary items={navSecondaryItems} className="mt-auto" />
       </SidebarContent>
 

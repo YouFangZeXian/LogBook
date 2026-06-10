@@ -1,13 +1,11 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { MagnifyingGlass } from "@phosphor-icons/react/dist/ssr";
 
 import { getCurrentLogbookUser } from "@/components/auth-dialog";
-import { siteConfig } from "@/lib/site";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 
 type SiteHeaderProps = {
@@ -67,65 +65,20 @@ export function SiteHeader({
       }`}
     >
       <div className="page-shell flex h-14 items-center justify-between">
-        {/* Left */}
-        <div className="flex min-w-0 items-center gap-3">
-          {/* Mobile menu trigger */}
-          <SidebarTrigger className="inline-flex h-9 w-9 items-center justify-center rounded-[10px] text-muted transition-colors hover:bg-black/5 hover:text-foreground lg:hidden" />
-
-          {/* Logo */}
-          <Link href="/" className="flex shrink-0 items-center gap-2.5">
-            <span className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-[10px] border border-border bg-white">
-              <Image
-                src="/logo-mark.png"
-                alt="路格舶"
-                width={28}
-                height={28}
-                className="h-full w-full object-cover"
-              />
-            </span>
-            <span className="hidden sm:block">
-              <span className="text-[11px] uppercase tracking-[0.12em] text-faint [font-family:var(--font-mono)]">
-                {siteConfig.logline}
-              </span>
-              <span className="block text-sm font-semibold tracking-[-0.01em] text-foreground">
-                {pageLabel}
-              </span>
-            </span>
-          </Link>
+        {/* Left: Sidebar trigger + page title */}
+        <div className="flex min-w-0 items-center gap-2">
+          <SidebarTrigger className="inline-flex h-9 w-9 items-center justify-center rounded-[10px] text-muted transition-all duration-200 hover:bg-black/5 hover:text-foreground hover:scale-105 active:scale-95" />
+          <h1 className="text-lg font-semibold tracking-[-0.02em] text-foreground transition-all duration-300 select-none">
+            {pageLabel}
+          </h1>
         </div>
 
-        {/* Center: Desktop nav links */}
-        <nav className="hidden items-center gap-1 lg:flex">
-          {[
-            { href: "/start", label: "登船" },
-            { href: "/category", label: "航路" },
-            { href: "/tools", label: "船坞" },
-            { href: "/resources", label: "补给" },
-            { href: "/discoveries", label: "发现" },
-          ].map((item) => {
-            const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`rounded-[10px] px-3 py-1.5 text-sm font-medium transition-colors ${
-                  active
-                    ? "bg-brand text-white"
-                    : "text-muted hover:bg-black/5 hover:text-foreground"
-                }`}
-              >
-                {item.label}
-              </Link>
-            );
-          })}
-        </nav>
-
-        {/* Right */}
+        {/* Right: search + login/user + cta */}
         <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={onOpenSearch}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-[10px] text-muted transition-colors hover:bg-black/5 hover:text-foreground"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-[10px] text-muted transition-all duration-200 hover:bg-black/5 hover:text-foreground hover:scale-105 active:scale-95"
             aria-label="搜索"
           >
             <MagnifyingGlass size={17} />
@@ -138,14 +91,17 @@ export function SiteHeader({
                 window.localStorage.removeItem("logbook.auth.user");
                 window.dispatchEvent(new Event("logbook-auth-changed"));
               }}
-              className="hidden rounded-[10px] px-3 py-1.5 text-sm font-medium text-muted transition-colors hover:bg-black/5 hover:text-foreground sm:block"
+              className="hidden rounded-[10px] px-3 py-1.5 text-sm font-medium text-muted transition-all duration-200 hover:bg-black/5 hover:text-foreground sm:block"
               title="退出"
             >
               {userName}
             </button>
           ) : null}
 
-          <Link href="/login" className="btn-primary px-4 py-2 text-sm">
+          <Link
+            href="/login"
+            className="btn-primary px-4 py-2 text-sm font-medium transition-all duration-200 hover:shadow-md active:scale-95"
+          >
             登船
           </Link>
         </div>

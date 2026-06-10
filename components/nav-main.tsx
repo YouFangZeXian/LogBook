@@ -12,7 +12,6 @@ import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarMenu,
-  SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSub,
@@ -52,54 +51,55 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
           return (
             <Collapsible
               key={item.title}
-              defaultOpen={active}
+              defaultOpen={true}
               render={<SidebarMenuItem />}
             >
-              <SidebarMenuButton
-                tooltip={item.title}
-                isActive={!hasSub && active}
-                render={
-                  hasSub ? undefined : <Link href={item.href} />
-                }
-              >
-                {item.icon}
-                <span>{item.title}</span>
-              </SidebarMenuButton>
               {hasSub ? (
-                <>
-                  <CollapsibleTrigger
-                    render={
-                      <SidebarMenuAction />
-                    }
-                  >
-                    <CaretDown
-                      size={14}
-                      weight="bold"
-                    />
-                    <span className="sr-only">展开/收起</span>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent>
-                    <SidebarMenuSub>
-                      {item.items!.map((sub) => {
-                        const subActive =
-                          sub.href === "/"
-                            ? pathname === "/"
-                            : pathname === sub.href ||
-                              pathname.startsWith(`${sub.href}/`);
-                        return (
-                          <SidebarMenuSubItem key={sub.href}>
-                            <SidebarMenuSubButton
-                              isActive={subActive}
-                              render={<Link href={sub.href} />}
-                            >
-                              <span>{sub.label}</span>
-                            </SidebarMenuSubButton>
-                          </SidebarMenuSubItem>
-                        );
-                      })}
-                    </SidebarMenuSub>
-                  </CollapsibleContent>
-                </>
+                <CollapsibleTrigger
+                  render={
+                    <SidebarMenuButton tooltip={item.title}>
+                      {item.icon}
+                      <span>{item.title}</span>
+                      <CaretDown
+                        size={14}
+                        weight="bold"
+                        className="ml-auto transition-transform duration-200 group-data-[open]:rotate-180"
+                      />
+                    </SidebarMenuButton>
+                  }
+                />
+              ) : (
+                <SidebarMenuButton
+                  tooltip={item.title}
+                  isActive={active}
+                  render={<Link href={item.href} />}
+                >
+                  {item.icon}
+                  <span>{item.title}</span>
+                </SidebarMenuButton>
+              )}
+              {hasSub ? (
+                <CollapsibleContent>
+                  <SidebarMenuSub>
+                    {item.items!.map((sub) => {
+                      const subActive =
+                        sub.href === "/"
+                          ? pathname === "/"
+                          : pathname === sub.href ||
+                            pathname.startsWith(`${sub.href}/`);
+                      return (
+                        <SidebarMenuSubItem key={sub.href}>
+                          <SidebarMenuSubButton
+                            isActive={subActive}
+                            render={<Link href={sub.href} />}
+                          >
+                            <span>{sub.label}</span>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                      );
+                    })}
+                  </SidebarMenuSub>
+                </CollapsibleContent>
               ) : null}
             </Collapsible>
           );
