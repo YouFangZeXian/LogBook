@@ -13,7 +13,7 @@ import {
 import { getCurrentLogbookUser, requestLogbookLogin } from "@/components/auth-dialog";
 import { NavMain, type NavMainItem } from "@/components/nav-main";
 import { NavSecondary, type NavSecondaryItem } from "@/components/nav-secondary";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { NavUser } from "@/components/nav-user";
 import { siteConfig } from "@/lib/site";
 import {
   Sidebar,
@@ -25,7 +25,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 
-/* ── 将 siteConfig.navSections 转换为 NavMain 的可折叠分组格式 ── */
+/* ── 将 siteConfig.navSections 转换为 NavMain 格式 ── */
 
 const sectionIcons: Record<string, React.ReactNode> = {
   "主航道": <Compass size={18} weight="duotone" />,
@@ -35,12 +35,12 @@ const sectionIcons: Record<string, React.ReactNode> = {
 
 const navMainItems: NavMainItem[] = siteConfig.navSections.map((section) => ({
   title: section.title,
-  href: section.items[0]?.href ?? "#",
+  url: section.items[0]?.href ?? "#",
   icon: sectionIcons[section.title] ?? <Compass size={18} weight="duotone" />,
-  isActive: false, // auto-detected by NavMain via pathname
+  isActive: false,
   items: section.items.map((item) => ({
-    label: item.label,
-    href: item.href,
+    title: item.label,
+    url: item.href,
   })),
 }));
 
@@ -54,17 +54,15 @@ const navSecondaryItems: NavSecondaryItem[] = [
   },
 ];
 
-/* ── 用户区块（侧边栏底部） ── */
+/* ── 入口组件 ── */
 
-function SidebarUserFooter() {
-  const [userName, setUserName] = useState("");
-  const [userEmail, setUserEmail] = useState("");
+export function SiteSidebar() {
+  const [user, setUser] = useState<{ name: string; email: string; avatar: string } | null>(null);
 
   useEffect(() => {
     const sync = () => {
-      const user = getCurrentLogbookUser();
-      setUserName(user?.name ?? "");
-      setUserEmail(user?.email ?? "");
+      const u = getCurrentLogbookUser();
+      setUser(u ? { name: u.name, email: u.email, avatar: "" } : null);
     };
     sync();
     window.addEventListener("logbook-auth-changed", sync);
@@ -72,35 +70,13 @@ function SidebarUserFooter() {
   }, []);
 
   return (
-    <button
-      type="button"
-      onClick={() => requestLogbookLogin()}
-      className="flex w-full items-center gap-3 rounded-[12px] border border-sidebar-border bg-sidebar px-3 py-2.5 text-left transition-colors hover:bg-sidebar-accent"
-    >
-      <UserCircle size={17} weight="duotone" className="text-muted-foreground shrink-0" />
-      <span className="min-w-0">
-        <span className="block truncate text-sm font-medium text-sidebar-foreground">
-          {userName || "登录 / 船员档案"}
-        </span>
-        <span className="block truncate text-xs text-muted-foreground">
-          {userEmail || "保存航线与投稿记录"}
-        </span>
-      </span>
-    </button>
-  );
-}
-
-/* ── 入口组件 ── */
-
-export function SiteSidebar() {
-  return (
     <Sidebar variant="inset" collapsible="icon">
       {/* ── 品牌头部 ── */}
-      <SidebarHeader className="pb-0">
+      <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" render={<Link href="/" />}>
-              <div className="flex aspect-square size-8 items-center justify-center overflow-hidden rounded-lg bg-brand-mist">
+              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
                 {/* Logo placeholder — 待插入图片 */}
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
@@ -114,18 +90,37 @@ export function SiteSidebar() {
         </SidebarMenu>
       </SidebarHeader>
 
-      {/* ── 可滚动内容：主导航 + 主题切换 + 次要导航 ── */}
+      {/* ── 可滚动内容：主导航 + 次要导航 ── */}
       <SidebarContent>
         <NavMain items={navMainItems} />
-        <div className="px-2 mt-2">
-          <ThemeToggle />
-        </div>
         <NavSecondary items={navSecondaryItems} className="mt-auto" />
       </SidebarContent>
 
-      {/* ── 底部用户入口 ── */}
+      {/* ── 底部用户区 ── */}
       <SidebarFooter>
-        <SidebarUserFooter />
+        {user ? (
+          <NavUser user={user} />
+        ) : (
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                size="lg"
+                onClick={() => requestLogbookLogin()}
+                className="w-full"
+              >
+                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                  <UserCircle size={16} weight="fill" />
+                </div>
+                <div className="grid flex-1 text-left text-sm leading-tight">
+                  <span className="truncate font-medium">登录 / 船员档案</span>
+                  <span className="truncate text-xs text-muted-foreground">
+                    保存航线与投稿记录
+                  </span>
+                </div>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        )}
       </SidebarFooter>
     </Sidebar>
   );
