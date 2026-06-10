@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { MagnifyingGlass } from "@phosphor-icons/react/dist/ssr";
 
-import { getCurrentLogbookUser, requestLogbookLogin } from "@/components/auth-dialog";
+import { getCurrentLogbookUser } from "@/components/auth-dialog";
 import { siteConfig } from "@/lib/site";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 
@@ -143,17 +143,9 @@ export function SiteHeader({
             >
               {userName}
             </button>
-          ) : (
-            <button
-              type="button"
-              onClick={() => requestLogbookLogin()}
-              className="hidden rounded-[10px] px-3 py-1.5 text-sm font-medium text-muted transition-colors hover:bg-black/5 hover:text-foreground sm:block"
-            >
-              登录
-            </button>
-          )}
+          ) : null}
 
-          <Link href="/start" className="btn-primary px-4 py-2 text-sm">
+          <Link href="/login" className="btn-primary px-4 py-2 text-sm">
             登船
           </Link>
         </div>

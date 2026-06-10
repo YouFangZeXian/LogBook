@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 
 import type { SearchEntry } from "@/lib/content";
 import { AuthDialog } from "@/components/auth-dialog";
@@ -17,6 +18,7 @@ type SiteShellProps = {
 };
 
 export function SiteShell({ children, searchEntries }: SiteShellProps) {
+  const pathname = usePathname();
   const [searchOpen, setSearchOpen] = useState(false);
 
   useEffect(() => {
@@ -24,6 +26,11 @@ export function SiteShell({ children, searchEntries }: SiteShellProps) {
     window.addEventListener("site-search-open", handler);
     return () => window.removeEventListener("site-search-open", handler);
   }, []);
+
+  // Standalone pages — no sidebar/header/footer chrome
+  if (pathname === "/login") {
+    return <>{children}</>;
+  }
 
   return (
     <>

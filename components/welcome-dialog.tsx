@@ -79,7 +79,7 @@ export function WelcomeDialog() {
 
         {/* Actions */}
         <div className="space-y-3">
-          <Link href="/start" onClick={close} className="btn-primary w-full py-3 text-base">
+          <Link href="/login" onClick={close} className="btn-primary w-full py-3 text-base">
             开始登船 <ArrowUpRight size={16} />
           </Link>
           <button type="button" onClick={close} className="btn-secondary w-full py-3 text-base">
