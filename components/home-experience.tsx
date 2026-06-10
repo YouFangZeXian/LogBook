@@ -97,7 +97,7 @@ export function HomeExperience({ latestArticles }: HomeExperienceProps) {
 
       {/* ── Quick Entries ── */}
       <section className="page-shell -mt-6 pb-10 md:pb-14">
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 stagger">
           {quickEntries.map((entry) => (
             <Link
               key={entry.href}
@@ -137,7 +137,7 @@ export function HomeExperience({ latestArticles }: HomeExperienceProps) {
                 全部航路 <ArrowUpRight size={12} />
               </Link>
             </div>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 stagger">
               {latestArticles.length ? (
                 latestArticles.map((article) => (
                   <ArticleCard key={article.slug} article={article} compact />

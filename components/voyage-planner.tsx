@@ -280,7 +280,7 @@ export function VoyagePlanner({ mode = "compact" }: VoyagePlannerProps) {
         {/* Progress bar */}
         <div className="h-1.5 overflow-hidden rounded-full bg-white">
           <span
-            className="block h-full rounded-full bg-brand-sea transition-all duration-500"
+            className="block h-full rounded-full bg-brand-sea transition-all duration-700 ease-out"
             style={{ width: `${Math.max(4, progress)}%` }}
           />
         </div>

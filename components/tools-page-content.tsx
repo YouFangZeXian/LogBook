@@ -269,7 +269,7 @@ export function ToolsPageContent() {
       </section>
 
       {/* ── Tool Cards Grid ── */}
-      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 stagger">
         {filtered.map((tool) => {
           const category = toolCategories.find((c) => c.id === tool.category.id);
           return (

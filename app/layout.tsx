@@ -65,6 +65,25 @@ export default function RootLayout({
         <TooltipProvider>
           <SiteShell searchEntries={searchEntries}>{children}</SiteShell>
         </TooltipProvider>
+        {/* Scroll reveal observer */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function(){
+                var observer = new IntersectionObserver(function(entries){
+                  entries.forEach(function(entry){
+                    if(entry.isIntersecting){
+                      entry.target.classList.add('is-visible');
+                    }
+                  });
+                },{threshold:0.1,rootMargin:'0px 0px -40px 0px'});
+                document.querySelectorAll('.animate-on-scroll,.stagger').forEach(function(el){
+                  observer.observe(el);
+                });
+              })();
+            `,
+          }}
+        />
       </body>
     </html>
   );

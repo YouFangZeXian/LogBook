@@ -544,37 +544,350 @@ summary::-webkit-details-marker {
 }
 
 /* ══════════════════════════════════════════════════════════════
-   ANIMATIONS
+   ANIMATIONS — 动效系统
    ══════════════════════════════════════════════════════════════ */
 
-@keyframes fade-in-up {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
+/* ── Fade ── */
 @keyframes fade-in {
   from { opacity: 0; }
   to   { opacity: 1; }
 }
-
-@keyframes sail-across {
-  0%   { transform: translateX(-20%) translateY(0); }
-  40%  { transform: translateX(45%) translateY(-2px); }
-  100% { transform: translateX(105%) translateY(0); }
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fade-in-down {
+  from { opacity: 0; transform: translateY(-12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fade-in-left {
+  from { opacity: 0; transform: translateX(-16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes fade-in-right {
+  from { opacity: 0; transform: translateX(16px); }
+  to   { opacity: 1; transform: translateX(0); }
 }
 
+/* ── Scale ── */
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.94); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes scale-up {
+  from { transform: scale(1); }
+  to   { transform: scale(1.04); }
+}
+
+/* ── Slide ── */
+@keyframes slide-up {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+@keyframes slide-down {
+  from { transform: translateY(-100%); }
+  to   { transform: translateY(0); }
+}
+
+/* ── Attention ── */
 @keyframes pulse-dot {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(78, 168, 199, 0.4); }
-  50%      { box-shadow: 0 0 0 8px rgba(78, 168, 199, 0); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(78, 168, 199, 0.5); }
+  50%      { box-shadow: 0 0 0 10px rgba(78, 168, 199, 0); }
+}
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@keyframes breathe {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.5; }
+}
+@keyframes wave {
+  0%   { transform: translateX(-100%); }
+  50%  { transform: translateX(0); }
+  100% { transform: translateX(100%); }
 }
 
-@keyframes route-glow {
-  0%, 100% { opacity: 0.4; }
-  50%      { opacity: 0.8; }
+/* ── Nautical ── */
+@keyframes sail-across {
+  0%   { transform: translateX(-20%) translateY(0) rotate(-2deg); }
+  40%  { transform: translateX(45%) translateY(-4px) rotate(0deg); }
+  100% { transform: translateX(105%) translateY(2px) rotate(1deg); }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+@keyframes wave-line {
+  0%   { d: path("M0,48 C80,42 160,54 240,48 C320,42 400,54 480,48 C560,42 640,54 720,48"); }
+  50%  { d: path("M0,48 C80,54 160,42 240,48 C320,54 400,42 480,48 C560,54 640,42 720,48"); }
+  100% { d: path("M0,48 C80,42 160,54 240,48 C320,42 400,54 480,48 C560,42 640,54 720,48"); }
+}
+@keyframes compass-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
 }
 
-.animate-fade-in-up {
-  animation: fade-in-up 0.5s ease both;
+/* ── Utility classes ── */
+.animate-fade-in       { animation: fade-in 0.5s ease both; }
+.animate-fade-in-up    { animation: fade-in-up 0.5s ease both; }
+.animate-fade-in-down  { animation: fade-in-down 0.4s ease both; }
+.animate-scale-in      { animation: scale-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.animate-float         { animation: float 3s ease-in-out infinite; }
+.animate-breathe       { animation: breathe 2s ease-in-out infinite; }
+.animate-pulse-dot     { animation: pulse-dot 2s infinite; }
+
+/* ── Staggered children (use on parent) ── */
+.stagger > * {
+  opacity: 0;
+  animation: fade-in-up 0.5s ease forwards;
+}
+.stagger > *:nth-child(1) { animation-delay: 0.05s; }
+.stagger > *:nth-child(2) { animation-delay: 0.1s; }
+.stagger > *:nth-child(3) { animation-delay: 0.15s; }
+.stagger > *:nth-child(4) { animation-delay: 0.2s; }
+.stagger > *:nth-child(5) { animation-delay: 0.25s; }
+.stagger > *:nth-child(6) { animation-delay: 0.3s; }
+.stagger > *:nth-child(7) { animation-delay: 0.35s; }
+.stagger > *:nth-child(8) { animation-delay: 0.4s; }
+.stagger > *:nth-child(9) { animation-delay: 0.45s; }
+.stagger > *:nth-child(n+10) { animation-delay: 0.5s; }
+
+/* ── Scroll reveal ── */
+.animate-on-scroll {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.animate-on-scroll.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   PROGRESS & LOADING — 进度条与骨架屏
+   ══════════════════════════════════════════════════════════════ */
+
+.progress-bar {
+  height: 4px;
+  border-radius: 999px;
+  background: var(--bg-secondary);
+  overflow: hidden;
+  position: relative;
+}
+.progress-bar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--brand-sea);
+  border-radius: 999px;
+  transform-origin: left;
+  animation: progress-fill 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes progress-fill {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(var(--progress, 0.6)); }
+}
+
+/* Shimmer skeleton */
+.skeleton {
+  background: linear-gradient(90deg, var(--bg-secondary) 25%, var(--bg-tertiary) 50%, var(--bg-secondary) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-md);
+}
+.skeleton-text  { height: 0.875rem; margin-bottom: 0.5rem; }
+.skeleton-title { height: 1.25rem; width: 60%; margin-bottom: 0.75rem; }
+.skeleton-avatar { width: 2.5rem; height: 2.5rem; border-radius: 50%; }
+.skeleton-card { height: 180px; }
+
+/* ══════════════════════════════════════════════════════════════
+   DIVIDERS & SEPARATORS — 线条与分隔系统
+   ══════════════════════════════════════════════════════════════ */
+
+.divider {
+  border-top: 1px solid var(--border-light);
+}
+
+/* Strong section divider — use between major page sections */
+.section-divider {
+  border: none;
+  border-top: 1px solid var(--border-medium);
+  margin: 2rem 0;
+}
+.section-divider.thick {
+  border-top-width: 2px;
+}
+
+/* Ornamental divider — decorative wave or dotted line */
+.divider-dotted {
+  border: none;
+  border-top: 2px dotted var(--border-light);
+  margin: 1.5rem 0;
+}
+
+/* Divider with label (like "or continue with") */
+.divider-label {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: var(--text-tertiary);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.divider-label::before,
+.divider-label::after {
+  content: '';
+  flex: 1;
+  border-top: 1px solid var(--border-light);
+}
+
+/* Sidebar section divider */
+.sidebar-divider {
+  border: none;
+  border-top: 1px solid var(--border-light);
+  margin: 0.5rem 0.75rem;
+}
+
+/* Card internal divider */
+.card-divider {
+  border: none;
+  border-top: 1px solid var(--border-light);
+  margin: 1rem 0;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   INTERACTIVE STATES — 交互状态增强
+   ══════════════════════════════════════════════════════════════ */
+
+/* Card press */
+.surface:active,
+.surface-panel:active {
+  transform: scale(0.985);
+  transition: transform 0.1s ease;
+}
+
+/* Focus ring — accessible outline */
+*:focus-visible {
+  outline: 2px solid var(--brand-sea);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* Link underline animation */
+.link-underline {
+  position: relative;
+  text-decoration: none;
+}
+.link-underline::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.3s ease;
+}
+.link-underline:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* Button loading state */
+.btn-loading {
+  position: relative;
+  color: transparent !important;
+  pointer-events: none;
+}
+.btn-loading::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: compass-spin 0.6s linear infinite;
+}
+
+/* Disabled state */
+.btn-disabled,
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   SCROLL-DRIVEN ANIMATIONS — 滚动驱动
+   ══════════════════════════════════════════════════════════════ */
+
+@supports (animation-timeline: scroll()) {
+  .scroll-reveal {
+    animation: fade-in-up linear both;
+    animation-timeline: view();
+    animation-range: entry 10% cover 30%;
+  }
+  .scroll-zoom {
+    animation: scale-in linear both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 25%;
+  }
+}
+
+/* Parallax helper */
+.parallax-slow {
+  transform: translateY(calc(var(--scroll-offset, 0) * 0.3px));
+  will-change: transform;
+}
+
+/* Sticky header shadow on scroll */
+.sticky-header {
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.sticky-header.scrolled {
+  box-shadow: 0 1px 3px rgba(15, 61, 94, 0.08);
+  border-color: var(--border-medium);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   NUMBER TICKER — 数字滚动动画
+   ══════════════════════════════════════════════════════════════ */
+
+@keyframes count-up {
+  from { opacity: 0; transform: translateY(0.5em); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.number-ticker {
+  display: inline-block;
+  font-variant-numeric: tabular-nums;
+}
+.number-ticker.animate {
+  animation: count-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   GLOW & DECORATIVE — 装饰性动效
+   ══════════════════════════════════════════════════════════════ */
+
+.glow-brand {
+  box-shadow: 0 0 20px rgba(78, 168, 199, 0.15);
+  transition: box-shadow 0.5s ease;
+}
+.glow-brand:hover {
+  box-shadow: 0 0 40px rgba(78, 168, 199, 0.25);
+}
+
+.glow-gold {
+  box-shadow: 0 0 20px rgba(200, 169, 106, 0.12);
+  transition: box-shadow 0.5s ease;
+}
+.glow-gold:hover {
+  box-shadow: 0 0 40px rgba(200, 169, 106, 0.22);
 }
 
 /* ══════════════════════════════════════════════════════════════

@@ -76,7 +76,7 @@ export function RouteCenter() {
         <aside className="surface-muted p-5">
           <p className="kicker">完成度</p>
           <p className="mt-4 text-5xl font-semibold tracking-[-0.02em] text-foreground">{activeProgress}%</p>
-          <div className="mt-5 h-2 rounded-full bg-white"><span className="block h-full rounded-full bg-brand-sea transition-all duration-500" style={{ width: `${Math.max(4, activeProgress)}%` }} /></div>
+          <div className="mt-5 h-2 rounded-full bg-white overflow-hidden"><span className="block h-full rounded-full bg-brand-sea transition-all duration-700 ease-out" style={{ width: `${Math.max(4, activeProgress)}%`, '--progress': activeProgress / 100 } as React.CSSProperties} /></div>
           <button type="button" onClick={() => requestLogbookLogin("登录后可保存航线到船员档案。")}
             className="btn-ghost mt-5 w-full text-sm">保存到船员档案</button>
         </aside>
