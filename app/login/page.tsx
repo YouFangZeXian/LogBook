@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -78,14 +77,8 @@ export default function LoginPage() {
         {/* Branding */}
         <div className="mb-8">
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-[10px] border border-border bg-white">
-              <Image
-                src="/logo-mark.png"
-                alt="路格舶"
-                width={28}
-                height={28}
-                className="h-full w-full object-cover"
-              />
+            <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-[10px] border border-border bg-brand-mist">
+              {/* Logo placeholder — 待插入图片 */}
             </div>
             <span className="text-[11px] uppercase tracking-[0.12em] text-faint [font-family:var(--font-mono)]">
               路格舶 / Logbook.today

@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import {
@@ -102,14 +101,7 @@ export function SiteSidebar() {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" render={<Link href="/" />}>
               <div className="flex aspect-square size-8 items-center justify-center overflow-hidden rounded-lg bg-brand-mist">
-                <Image
-                  src="/logo-mark.png"
-                  alt="路格舶"
-                  width={28}
-                  height={28}
-                  className="size-full object-cover"
-                  priority
-                />
+                {/* Logo placeholder — 待插入图片 */}
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{siteConfig.shortName}</span>
