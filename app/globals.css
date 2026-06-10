@@ -777,47 +777,181 @@ summary::-webkit-details-marker {
 }
 
 /* ══════════════════════════════════════════════════════════════
-   SIDEBAR ACTIVE STATE
+   SIDEBAR ACTIVE STATE — 深蓝色/深黄色 框选环
    ══════════════════════════════════════════════════════════════ */
 
-/* Light mode — 深蓝色框选 */
 [data-sidebar="menu-button"][data-active="true"] {
-  background: hsl(215 65% 42%) !important;
-  color: #ffffff !important;
+  box-shadow: inset 0 0 0 2px hsl(215 70% 45%) !important;
+  background: hsl(215 70% 92%) !important;
+  color: hsl(215 70% 25%) !important;
 }
 [data-sidebar="menu-button"][data-active="true"] svg {
-  color: #ffffff !important;
+  color: hsl(215 70% 40%) !important;
 }
 
-/* Dark mode — 深黄色框选 */
 .dark [data-sidebar="menu-button"][data-active="true"],
 [data-theme="dark"] [data-sidebar="menu-button"][data-active="true"] {
-  background: hsl(42 55% 38%) !important;
-  color: #ffffff !important;
+  box-shadow: inset 0 0 0 2px hsl(42 65% 42%) !important;
+  background: hsl(42 30% 18%) !important;
+  color: hsl(42 40% 80%) !important;
 }
 .dark [data-sidebar="menu-button"][data-active="true"] svg,
 [data-theme="dark"] [data-sidebar="menu-button"][data-active="true"] svg {
-  color: #ffffff !important;
-}
-
-/* Dark mode body background fix */
-.dark body,
-[data-theme="dark"] body {
-  background: #0f172a;
-}
-
-/* Stronger sidebar border in both modes */
-[data-sidebar="sidebar"] {
-  border-color: var(--border-medium);
+  color: hsl(42 65% 55%) !important;
 }
 
 /* ══════════════════════════════════════════════════════════════
-   SIDEBAR TRIGGER — move closer to sidebar
+   DARK MODE — 强制全页面暗色
+   ══════════════════════════════════════════════════════════════ */
+
+.dark body,
+[data-theme="dark"] body {
+  background: #0f172a !important;
+  color: #e2e8f0 !important;
+}
+
+/* 强制所有 bg-background 在暗色模式下变深 */
+.dark [data-slot="sidebar-inset"],
+[data-theme="dark"] [data-slot="sidebar-inset"],
+.dark .bg-background,
+[data-theme="dark"] .bg-background,
+.dark main,
+[data-theme="dark"] main {
+  background: #0f172a !important;
+}
+
+/* 暗色模式下所有 surface 面板 */
+.dark .surface,
+[data-theme="dark"] .surface,
+.dark .surface-panel,
+[data-theme="dark"] .surface-panel,
+.dark [class*="surface"],
+[data-theme="dark"] [class*="surface"] {
+  background: #1a2332 !important;
+  border-color: rgba(148,163,184,0.16) !important;
+  color: #e2e8f0 !important;
+}
+
+.dark .surface-muted,
+[data-theme="dark"] .surface-muted {
+  background: #141e2c !important;
+  border-color: rgba(148,163,184,0.12) !important;
+  color: #cbd5e1 !important;
+}
+
+.dark .surface-mist,
+[data-theme="dark"] .surface-mist {
+  background: #162a3d !important;
+  border-color: rgba(122,184,212,0.15) !important;
+  color: #e2e8f0 !important;
+}
+
+.dark .bg-white,
+[data-theme="dark"] .bg-white {
+  background: #1a2332 !important;
+}
+
+.dark .bg-background-secondary,
+[data-theme="dark"] .bg-background-secondary {
+  background: #141e2c !important;
+}
+
+/* 暗色文字 */
+.dark .text-foreground,
+[data-theme="dark"] .text-foreground,
+.dark h1, .dark h2, .dark h3, .dark h4,
+[data-theme="dark"] h1, [data-theme="dark"] h2, [data-theme="dark"] h3, [data-theme="dark"] h4 {
+  color: #e2e8f0 !important;
+}
+
+.dark .text-muted,
+[data-theme="dark"] .text-muted {
+  color: #94a3b8 !important;
+}
+
+.dark .text-faint,
+[data-theme="dark"] .text-faint {
+  color: #64748b !important;
+}
+
+/* 暗色输入框 */
+.dark .input-field,
+[data-theme="dark"] .input-field {
+  background: #141e2c !important;
+  border-color: rgba(148,163,184,0.16) !important;
+  color: #e2e8f0 !important;
+}
+
+/* 暗色 header */
+.dark header,
+[data-theme="dark"] header {
+  background: #0f172a !important;
+  border-color: rgba(148,163,184,0.14) !important;
+}
+
+/* 暗色 tag */
+.dark .tag,
+[data-theme="dark"] .tag {
+  background: #141e2c !important;
+  border-color: rgba(148,163,184,0.12) !important;
+  color: #cbd5e1 !important;
+}
+
+.dark .tag-brand,
+[data-theme="dark"] .tag-brand {
+  background: #162a3d !important;
+  color: #7ab8d4 !important;
+  border-color: rgba(122,184,212,0.2) !important;
+}
+
+.dark .tag-success,
+[data-theme="dark"] .tag-success {
+  background: #0f2b1d !important;
+  color: #47b881 !important;
+}
+
+.dark .tag-warning,
+[data-theme="dark"] .tag-warning {
+  background: #2a2010 !important;
+  color: #e6a817 !important;
+}
+
+/* 暗色按钮 */
+.dark .btn-secondary,
+[data-theme="dark"] .btn-secondary {
+  background: #1a2332 !important;
+  color: #e2e8f0 !important;
+  border-color: rgba(148,163,184,0.2) !important;
+}
+
+.dark .btn-ghost,
+[data-theme="dark"] .btn-ghost {
+  color: #cbd5e1 !important;
+}
+
+.dark .btn-mist,
+[data-theme="dark"] .btn-mist {
+  background: #162a3d !important;
+  color: #7ab8d4 !important;
+  border-color: rgba(122,184,212,0.2) !important;
+}
+
+/* 暗色 separator / divider */
+.dark [role="separator"],
+[data-theme="dark"] [role="separator"],
+.dark .divider,
+[data-theme="dark"] .divider {
+  border-color: rgba(148,163,184,0.14) !important;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   SIDEBAR TRIGGER + BORDER
    ══════════════════════════════════════════════════════════════ */
 
 [data-sidebar="trigger"] {
   margin-left: -4px;
 }
-[data-slot="collapsible-trigger"] svg:last-child {
-  transition: transform 0.2s ease;
+
+[data-sidebar="sidebar"] {
+  border-color: var(--border-medium);
 }
