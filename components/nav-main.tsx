@@ -49,53 +49,66 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
                     pathname.startsWith(`${sub.url}/`)
                 ));
 
+          if (!hasSub) {
+            return (
+              <SidebarMenuItem key={item.title}>
+                <SidebarMenuButton
+                  tooltip={item.title}
+                  isActive={active}
+                  render={<Link href={item.url} />}
+                >
+                  {item.icon}
+                  <span>{item.title}</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            );
+          }
+
           return (
             <Collapsible
               key={item.title}
               defaultOpen={true}
               render={<SidebarMenuItem />}
             >
-              <SidebarMenuButton
-                tooltip={item.title}
-                isActive={active}
-                render={<Link href={item.url} />}
+              <CollapsibleTrigger
+                render={
+                  <SidebarMenuButton
+                    tooltip={item.title}
+                    isActive={active}
+                  />
+                }
               >
                 {item.icon}
                 <span>{item.title}</span>
-              </SidebarMenuButton>
-              {hasSub ? (
-                <>
-                  <CollapsibleTrigger
-                    render={
-                      <SidebarMenuAction className="[&[aria-expanded=true]>svg]:rotate-90" />
-                    }
-                  >
-                    <CaretRight size={14} weight="bold" className="transition-transform duration-200" />
-                    <span className="sr-only">展开/收起</span>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent>
-                    <SidebarMenuSub>
-                      {item.items!.map((sub) => {
-                        const subActive =
-                          sub.url === "/"
-                            ? pathname === "/"
-                            : pathname === sub.url ||
-                              pathname.startsWith(`${sub.url}/`);
-                        return (
-                          <SidebarMenuSubItem key={sub.title}>
-                            <SidebarMenuSubButton
-                              isActive={subActive}
-                              render={<Link href={sub.url} />}
-                            >
-                              <span>{sub.title}</span>
-                            </SidebarMenuSubButton>
-                          </SidebarMenuSubItem>
-                        );
-                      })}
-                    </SidebarMenuSub>
-                  </CollapsibleContent>
-                </>
-              ) : null}
+                <SidebarMenuAction className="pointer-events-none [&>svg]:transition-transform [&>svg]:duration-200">
+                  <CaretRight
+                    size={14}
+                    weight="bold"
+                    className="ml-auto transition-transform duration-200 group-data-[open=true]/collapsible:rotate-90"
+                  />
+                </SidebarMenuAction>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <SidebarMenuSub>
+                  {item.items!.map((sub) => {
+                    const subActive =
+                      sub.url === "/"
+                        ? pathname === "/"
+                        : pathname === sub.url ||
+                          pathname.startsWith(`${sub.url}/`);
+                    return (
+                      <SidebarMenuSubItem key={sub.title}>
+                        <SidebarMenuSubButton
+                          isActive={subActive}
+                          render={<Link href={sub.url} />}
+                        >
+                          <span>{sub.title}</span>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                    );
+                  })}
+                </SidebarMenuSub>
+              </CollapsibleContent>
             </Collapsible>
           );
         })}
