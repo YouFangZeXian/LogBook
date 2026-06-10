@@ -1293,6 +1293,74 @@ button:disabled {
 }
 
 /* ══════════════════════════════════════════════════════════════
+   DARK MODE — 卡片点击/激活防白化
+   ══════════════════════════════════════════════════════════════ */
+
+/* Prevent all cards from going white on click/focus/active */
+.dark .surface:active,
+.dark .surface-panel:active,
+.dark [class*="surface"]:active,
+[data-theme="dark"] .surface:active,
+[data-theme="dark"] .surface-panel:active,
+[data-theme="dark"] [class*="surface"]:active {
+  background: #1a2332 !important;
+  border-color: rgba(148,163,184,0.18) !important;
+}
+
+/* Clickable card/link elements in dark mode — keep dark on focus */
+.dark a.surface:focus-visible,
+.dark a.surface-panel:focus-visible,
+.dark a[class*="surface"]:focus-visible,
+[data-theme="dark"] a.surface:focus-visible,
+[data-theme="dark"] a.surface-panel:focus-visible,
+[data-theme="dark"] a[class*="surface"]:focus-visible {
+  background: #1a2332 !important;
+  outline-color: var(--brand-sea) !important;
+}
+
+/* Group-hover on cards — prevent parent hover from bleaching children */
+.dark .group:hover .surface,
+.dark .group:hover .surface-panel,
+[data-theme="dark"] .group:hover .surface,
+[data-theme="dark"] .group:hover .surface-panel {
+  background: #1a2332 !important;
+}
+
+/* White backgrounds specifically — force dark */
+.dark [class*="bg-white"]:active,
+[data-theme="dark"] [class*="bg-white"]:active,
+.dark button.bg-white:active,
+[data-theme="dark"] button.bg-white:active {
+  background: #1a2332 !important;
+}
+
+/* VoyagePlanner device/status selector buttons in dark mode */
+.dark [class*="rounded-"]:has(.transition-all):active,
+[data-theme="dark"] [class*="rounded-"]:has(.transition-all):active {
+  background: #1e293b !important;
+}
+
+/* Tag click states */
+.dark .tag:active,
+[data-theme="dark"] .tag:active {
+  background: #141e2c !important;
+}
+
+/* Input focus — prevent white flash */
+.dark .input-field:focus,
+[data-theme="dark"] .input-field:focus {
+  background: #141e2c !important;
+  border-color: var(--brand-sea) !important;
+  box-shadow: 0 0 0 3px rgba(122,184,212,0.12) !important;
+}
+
+/* Any transition that flashes bg-color on click */
+.dark *:active:not(button):not(a),
+[data-theme="dark"] *:active:not(button):not(a) {
+  transition: none !important;
+}
+
+/* ══════════════════════════════════════════════════════════════
    SIDEBAR TRIGGER + BORDER
    ══════════════════════════════════════════════════════════════ */
 

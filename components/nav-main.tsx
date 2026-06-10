@@ -4,22 +4,15 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarMenu,
-  SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
-import { CaretRight } from "@phosphor-icons/react/dist/ssr";
 
 export type NavMainItem = {
   title: string;
@@ -65,51 +58,36 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
           }
 
           return (
-            <Collapsible
-              key={item.title}
-              defaultOpen={true}
-              render={<SidebarMenuItem />}
-            >
-              <CollapsibleTrigger
-                render={
-                  <SidebarMenuButton
-                    tooltip={item.title}
-                    isActive={active}
-                  />
-                }
+            <SidebarMenuItem key={item.title}>
+              <SidebarMenuButton
+                tooltip={item.title}
+                isActive={active}
+                render={<Link href={item.url} />}
               >
                 {item.icon}
                 <span>{item.title}</span>
-                <SidebarMenuAction className="pointer-events-none">
-                  <CaretRight
-                    size={14}
-                    weight="bold"
-                    className="nav-group-caret ml-auto transition-transform duration-200"
-                  />
-                </SidebarMenuAction>
-              </CollapsibleTrigger>
-              <CollapsibleContent>
-                <SidebarMenuSub>
-                  {item.items!.map((sub) => {
-                    const subActive =
-                      sub.url === "/"
-                        ? pathname === "/"
-                        : pathname === sub.url ||
-                          pathname.startsWith(`${sub.url}/`);
-                    return (
-                      <SidebarMenuSubItem key={sub.title}>
-                        <SidebarMenuSubButton
-                          isActive={subActive}
-                          render={<Link href={sub.url} />}
-                        >
-                          <span>{sub.title}</span>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                    );
-                  })}
-                </SidebarMenuSub>
-              </CollapsibleContent>
-            </Collapsible>
+                <span className="ml-auto h-1.5 w-1.5 rounded-full bg-current opacity-50" />
+              </SidebarMenuButton>
+              <SidebarMenuSub>
+                {item.items!.map((sub) => {
+                  const subActive =
+                    sub.url === "/"
+                      ? pathname === "/"
+                      : pathname === sub.url ||
+                        pathname.startsWith(`${sub.url}/`);
+                  return (
+                    <SidebarMenuSubItem key={sub.title}>
+                      <SidebarMenuSubButton
+                        isActive={subActive}
+                        render={<Link href={sub.url} />}
+                      >
+                        <span>{sub.title}</span>
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                  );
+                })}
+              </SidebarMenuSub>
+            </SidebarMenuItem>
           );
         })}
       </SidebarMenu>
