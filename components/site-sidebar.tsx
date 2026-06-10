@@ -59,17 +59,16 @@ export function SiteSidebar() {
 
   return (
     <Sidebar variant="inset" collapsible="icon">
-      {/* ── 品牌头部 ── */}
+      {/* ── 品牌头部 — editorial serif brand ── */}
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" render={<Link href="/" />}>
-              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                {/* Logo placeholder — 待插入图片 */}
-              </div>
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{siteConfig.shortName}</span>
-                <span className="truncate text-xs text-muted-foreground">
+            <SidebarMenuButton size="lg" render={<Link href="/" />} className="h-auto py-3">
+              <div className="flex flex-col gap-0.5">
+                <span className="text-[22px] font-bold italic tracking-[-0.01em] leading-none [font-family:var(--font-serif-display)]">
+                  {siteConfig.shortName}
+                </span>
+                <span className="text-[11px] text-muted-foreground tracking-[0.14em] uppercase [font-family:var(--font-mono)]">
                   {siteConfig.logline}
                 </span>
               </div>

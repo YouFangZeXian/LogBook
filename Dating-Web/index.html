@@ -1,0 +1,557 @@
+<!doctype html>
+<html lang="en"><head><script data-od-sandbox-shim="">(function(){
+  function makeStore(){
+    var data = {};
+    var api = {
+      getItem: function(k){ return Object.prototype.hasOwnProperty.call(data, k) ? data[k] : null; },
+      setItem: function(k, v){ data[k] = String(v); },
+      removeItem: function(k){ delete data[k]; },
+      clear: function(){ data = {}; },
+      key: function(i){ return Object.keys(data)[i] || null; }
+    };
+    Object.defineProperty(api, 'length', { get: function(){ return Object.keys(data).length; } });
+    return api;
+  }
+  function tryShim(name){
+    var works = false;
+    try { works = !!window[name] && typeof window[name].getItem === 'function'; void window[name].length; }
+    catch (_) { works = false; }
+    if (works) return;
+    try { Object.defineProperty(window, name, { configurable: true, value: makeStore() }); }
+    catch (_) { try { window[name] = makeStore(); } catch (__) {} }
+  }
+  tryShim('localStorage');
+  tryShim('sessionStorage');
+  document.addEventListener('click', (e) => {
+    if (!e.target || !(e.target instanceof Element)) return;
+    var link = e.target.closest('a[href]');
+    if (!link) return;
+    var href = link.getAttribute('href');
+    if (href === null) return;
+    var isAnchor = href.startsWith('#') || href === '';
+    if (isAnchor) {
+      e.preventDefault();
+      if (href === '' || href === '#') {
+        window.scrollTo({ top: 0 });
+        history.replaceState(null, '', ' ');
+      } else {
+        var targetId = href.slice(1);
+        var target = targetId ? document.getElementById(targetId) : null;
+        if (target) {
+          target.scrollIntoView();
+          location.hash === href && history.replaceState(null, '', ' ');
+          location.hash = href;
+        }
+      }
+    } else if (link.getAttribute('target') === '_blank') {
+      e.preventDefault();
+      let safe = false;
+      try {
+        var url = new URL(href, location.href);
+        safe =
+          url.protocol === 'http:' ||
+          url.protocol === 'https:' ||
+          url.protocol === 'mailto:';
+      } catch (_) {}
+      safe && window.open(href, '_blank', 'noopener,noreferrer');
+    }
+  });
+})();</script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>mutuals · your dating life, measured by the company you keep</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&amp;family=DM+Serif+Text:ital@0;1&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --paper: #f4ede0;
+      --panel: #f9f3e7;
+      --ink: #1f1c14;
+      --muted: #7a7264;
+      --rule: #d6cdb6;
+      --accent: #c14a2b;
+      --good: #406b3a;
+      --bad: #b6422f;
+      --serif-display: 'DM Serif Display', 'Iowan Old Style', Georgia, serif;
+      --serif-body: 'DM Serif Text', 'Iowan Old Style', Georgia, serif;
+      --mono: 'IBM Plex Mono', ui-monospace, monospace;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font: 14px/1.55 var(--serif-body); }
+
+    .ticker {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 28px;
+      border-bottom: 1px solid var(--ink);
+      font: 11px/1 var(--mono);
+      color: var(--muted);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+    .ticker .left { display: flex; align-items: center; gap: 18px; }
+    .ticker b { color: var(--ink); font-weight: 500; }
+
+    .layout { display: grid; grid-template-columns: 232px 1fr; min-height: calc(100vh - 44px); }
+    aside.rail {
+      border-right: 1px solid var(--ink);
+      padding: 22px 22px 22px 28px;
+      display: flex; flex-direction: column; gap: 22px;
+    }
+    aside .brand { font: italic 800 30px/1 var(--serif-display); letter-spacing: -0.005em; }
+    aside .brand .dot { color: var(--accent); }
+    aside .user { display: flex; align-items: center; gap: 10px; }
+    aside .avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--ink); color: var(--paper); display: grid; place-items: center; font: 700 12px/1 var(--mono); letter-spacing: 0.06em; }
+    aside .user .meta { font: 13px/1.2 var(--mono); }
+    aside .user .meta b { display: block; color: var(--ink); font-weight: 500; }
+    aside .user .meta span { color: var(--muted); font-size: 11px; letter-spacing: 0.06em; }
+
+    aside h4 { font: 11px/1 var(--mono); color: var(--muted); letter-spacing: 0.18em; text-transform: uppercase; margin: 0 0 10px; }
+    aside ul { list-style: none; padding: 0; margin: 0 0 14px; display: flex; flex-direction: column; gap: 4px; }
+    aside li { display: flex; justify-content: space-between; align-items: center; padding: 5px 8px; border-radius: 4px; font: 15.5px/1.2 var(--serif-body); color: var(--ink); cursor: default; }
+    aside li.active { background: rgba(193,74,43,0.10); color: var(--accent); font-weight: 600; }
+    aside li.active::before { content: '●'; color: var(--accent); margin-right: 6px; font-size: 9px; }
+    aside li .badge { background: var(--accent); color: var(--paper); font: 10px/1 var(--mono); padding: 3px 6px; border-radius: 999px; letter-spacing: 0.06em; }
+    aside li .badge.gray { background: var(--ink); }
+
+    aside .status {
+      margin-top: auto;
+      padding-top: 18px;
+      border-top: 1px solid var(--rule);
+      font: 11px/1.4 var(--mono);
+      color: var(--muted);
+      letter-spacing: 0.06em;
+    }
+    aside .status .live::before { content: '●'; color: #2f7d4a; margin-right: 6px; }
+
+    main { padding: 30px 36px 44px; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-auto-rows: minmax(120px, auto);
+      gap: 22px 36px;
+      margin-bottom: 36px;
+    }
+    .stat { padding: 4px 0 14px; border-bottom: 1px solid var(--rule); }
+    .stat .label { font: 11px/1.4 var(--mono); color: var(--muted); letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 6px; }
+    .stat .value {
+      font: 800 56px/1.05 var(--serif-display);
+      letter-spacing: -0.01em;
+      font-feature-settings: 'tnum';
+      margin-bottom: 6px;
+    }
+    .stat .value.good { color: var(--good); }
+    .stat .value.bad { color: var(--bad); }
+    .stat .value em { font-style: italic; font-weight: 400; }
+    .stat .note { font: italic 13.5px/1.4 var(--serif-body); color: var(--muted); max-width: 32ch; }
+    .stat .arrow { font-style: normal; color: var(--good); font-size: 14px; }
+
+    .panel { padding: 18px 0 24px; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--rule); margin-bottom: 18px; }
+    .panel-head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin-bottom: 14px; }
+    .panel-head h3 { margin: 0; font: italic 24px/1 var(--serif-display); letter-spacing: -0.005em; }
+    .panel-head .meta { font: 11px/1.4 var(--mono); color: var(--muted); letter-spacing: 0.16em; text-transform: uppercase; max-width: 56ch; text-align: right; }
+    .panel svg { width: 100%; height: 220px; display: block; }
+    .panel .axis { display: flex; justify-content: space-between; font: 10px/1 var(--mono); color: var(--muted); letter-spacing: 0.1em; padding: 8px 4px 0; text-transform: uppercase; }
+
+    .lower-panel .lede { font: italic 15px/1.55 var(--serif-body); color: var(--muted); margin: 0; max-width: 70ch; }
+    .lower-panel .lede b { color: var(--ink); font-style: normal; font-weight: 600; }
+
+    @media (max-width: 1100px) {
+      .layout { grid-template-columns: 1fr; }
+      aside.rail { border-right: none; border-bottom: 1px solid var(--ink); }
+      .grid { grid-template-columns: repeat(2, 1fr); gap: 18px 28px; }
+    }
+  </style>
+<style data-od-tweaks-bridge-style="">
+[data-od-tweaks-hidden] .tw-panel {
+  transform: translateX(calc(100% + 32px)) !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+.tw-restore { display: none !important; }
+</style><script data-od-tweaks-bridge="">(function(){
+  // Synchronously hide BEFORE the artifact body parses so the panel never
+  // flashes on initial paint. The host removes the attribute via postMessage
+  // once it knows the desired state.
+  document.documentElement.setAttribute('data-od-tweaks-hidden', '');
+
+  var suppressEcho = false;
+  var observer = null;
+
+  function panelEl(){ return document.querySelector('.tw-panel'); }
+
+  function applyClassesToPanel(visible){
+    var panel = panelEl();
+    if (panel) panel.classList.toggle('tw-hidden', !visible);
+  }
+
+  function setPanelVisible(visible){
+    suppressEcho = true;
+    document.documentElement.toggleAttribute('data-od-tweaks-hidden', !visible);
+    applyClassesToPanel(visible);
+    // Clear flag after the MutationObserver has had a chance to fire for this
+    // change so we don't echo our own host-driven toggles back to the host.
+    Promise.resolve().then(function(){ suppressEcho = false; });
+  }
+
+  function postState(){
+    var panel = panelEl();
+    if (!panel) return;
+    try {
+      parent.postMessage({
+        type: 'od:tweaks-panel-state',
+        visible: !panel.classList.contains('tw-hidden'),
+      }, '*');
+    } catch (e) {}
+  }
+
+  function postAvailability(){
+    try {
+      parent.postMessage({
+        type: 'od:tweaks-available',
+        available: !!panelEl(),
+      }, '*');
+    } catch (e) {}
+  }
+
+  function attachObserver(){
+    var panel = panelEl();
+    if (!panel || observer) return;
+    observer = new MutationObserver(function(){
+      if (suppressEcho) return;
+      postState();
+    });
+    observer.observe(panel, { attributes: true, attributeFilter: ['class'] });
+  }
+
+  function onReady(){
+    // Capture the panel authored visibility BEFORE we apply the host hidden
+    // attribute. The bridge sets data-od-tweaks-hidden synchronously in head
+    // (before the body parses), so on entry to onReady the attribute is
+    // always present even though the artifact may have authored the panel
+    // as default-visible. Reading the panel class first is the only place
+    // we can still observe the author intent. Then drive the attribute,
+    // classes, and posted state from that captured value so a default
+    // visible tw-panel reports visible:true and the toolbar toggle starts
+    // ON. Issue surfaced in PR #1643 review.
+    var panel = panelEl();
+    var initialVisible = !!panel && !panel.classList.contains('tw-hidden');
+    document.documentElement.toggleAttribute('data-od-tweaks-hidden', !initialVisible);
+    applyClassesToPanel(initialVisible);
+    attachObserver();
+    postAvailability();
+    // Post the captured initial visibility so the toolbar toggle reflects
+    // the default state on mount. Without this the toggle reads OFF while
+    // a default-visible tw-panel artifact clearly shows its panel and the
+    // user would have to click toggle-on then toggle-off to actually hide.
+    postState();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', onReady);
+  } else {
+    onReady();
+  }
+
+  window.addEventListener('message', function(ev){
+    if (!ev.data || ev.data.type !== 'od:tweaks-panel-visible') return;
+    setPanelVisible(!!ev.data.visible);
+  });
+})();</script></head>
+<body>
+  <div class="ticker" data-od-id="ticker">
+    <div class="left">
+      <span>YOUR DATING LIFE, MEASURED BY THE COMPANY YOU KEEP</span>
+      <span style="opacity:0.6;">·</span>
+      <span>REVIEWED WEEKLY</span>
+    </div>
+    <div>NEXT TIER AT <b>2,080 MUTUALS</b></div>
+  </div>
+
+  <div class="layout" data-od-id="path-1">
+    <aside class="rail" data-od-id="rail">
+      <div class="brand" data-od-id="path-1-0-0">mutuals<span class="dot">.</span></div>
+      <div class="user" data-od-id="path-1-0-1">
+        <div class="avatar">si</div>
+        <div class="meta"><b>@signals</b><span>RATIO 22.9 · TIER III</span></div>
+      </div>
+
+      <div>
+        <h4 data-od-id="path-1-0-2-0">Today</h4>
+        <ul>
+          <li>specimen <span class="badge">3</span></li>
+          <li>inbox <span class="badge">3</span></li>
+          <li>queue <span style="font:11px/1 var(--mono);color:var(--muted);">6</span></li>
+          <li>notifications <span class="badge gray">12</span></li>
+        </ul>
+      </div>
+      <div>
+        <h4 data-od-id="path-1-0-3-0">You</h4>
+        <ul>
+          <li class="active">your stats</li>
+          <li>mutuals &amp; communities</li>
+          <li>blocked <span style="font:11px/1 var(--mono);color:var(--muted);">14</span></li>
+          <li>settings</li>
+        </ul>
+      </div>
+      <div>
+        <h4 data-od-id="path-1-0-4-0">Archive</h4>
+        <ul>
+          <li>past issues</li>
+          <li>expired matches <span style="font:11px/1 var(--mono);color:var(--muted);">7</span></li>
+        </ul>
+      </div>
+
+      <div class="status" data-od-id="path-1-0-5">
+        <div class="live">online · last match 11m ago</div>
+        <div style="opacity:0.7;margin-top:2px;">mutuals.v0.6.1</div>
+      </div>
+    </aside>
+
+    <main data-od-id="main">
+      <section class="grid" data-od-id="kpis">
+        <div class="stat" data-od-id="path-1-1-0-0">
+          <div class="label">Mutuals on file</div>
+          <div class="value"><em>1,842</em></div>
+          <p class="note"><span class="arrow">↑</span> 41 this wk · healthy growth.</p>
+        </div>
+        <div class="stat" data-od-id="path-1-1-0-1">
+          <div class="label">Replies in 24h</div>
+          <div class="value good">47</div>
+          <p class="note">the people who'd text back within a day.</p>
+        </div>
+        <div class="stat" data-od-id="path-1-1-0-2">
+          <div class="label">Communities</div>
+          <div class="value"><em>14</em></div>
+          <p class="note">4 active · 7 lurking · 3 inferred.</p>
+        </div>
+
+        <div class="stat" data-od-id="path-1-1-0-3">
+          <div class="label">Match rate</div>
+          <div class="value good">14%</div>
+          <p class="note">above median for your cohort.</p>
+        </div>
+        <div class="stat" data-od-id="path-1-1-0-4">
+          <div class="label">2nd dates</div>
+          <div class="value"><em>3</em></div>
+          <p class="note">of 7 first dates this year. you commit.</p>
+        </div>
+        <div class="stat" data-od-id="path-1-1-0-5">
+          <div class="label">Exes in your circle</div>
+          <div class="value bad">4</div>
+          <p class="note">manageable. two are now friends.</p>
+        </div>
+
+        <div class="stat" data-od-id="path-1-1-0-6">
+          <div class="label">Shared blocks</div>
+          <div class="value"><em>214</em></div>
+          <p class="note">your single greatest compatibility asset.</p>
+        </div>
+        <div class="stat" data-od-id="path-1-1-0-7">
+          <div class="label">Avg response</div>
+          <div class="value"><em>2.1<span style="font-size:32px;">h</span></em></div>
+          <p class="note">too fast. wait 4–6h. they notice.</p>
+        </div>
+        <div class="stat" data-od-id="path-1-1-0-8">
+          <div class="label">Logged-off hrs</div>
+          <div class="value bad">4</div>
+          <p class="note">/ 168 this wk. we beg.</p>
+        </div>
+      </section>
+
+      <section class="panel" data-od-id="bars">
+        <div class="panel-head" data-od-id="path-1-1-1-0">
+          <h3 data-od-id="path-1-1-1-0-0">mutuals — <em>last 30 days</em></h3>
+          <div class="meta">↑ TRENDING UP · +3 CLOSE MUTUALS THIS MONTH · TWO VIA THE SAME OFFSITE</div>
+        </div>
+        <svg viewBox="0 0 720 220" preserveAspectRatio="none" aria-hidden="true">
+          <g fill="#1f1c14">
+            <rect x="6" y="170" width="14" height="50"></rect>
+            <rect x="30" y="158" width="14" height="62"></rect>
+            <rect x="54" y="146" width="14" height="74"></rect>
+            <rect x="78" y="172" width="14" height="48"></rect>
+            <rect x="102" y="162" width="14" height="58"></rect>
+            <rect x="126" y="138" width="14" height="82"></rect>
+            <rect x="150" y="120" width="14" height="100"></rect>
+            <rect x="174" y="148" width="14" height="72"></rect>
+            <rect x="198" y="132" width="14" height="88"></rect>
+            <rect x="222" y="108" width="14" height="112"></rect>
+            <rect x="246" y="118" width="14" height="102"></rect>
+            <rect x="270" y="154" width="14" height="66"></rect>
+            <rect x="294" y="130" width="14" height="90"></rect>
+            <rect x="318" y="100" width="14" height="120"></rect>
+            <rect x="342" y="86" width="14" height="134"></rect>
+            <rect x="366" y="116" width="14" height="104"></rect>
+            <rect x="390" y="138" width="14" height="82"></rect>
+            <rect x="414" y="92" width="14" height="128"></rect>
+            <rect x="438" y="74" width="14" height="146"></rect>
+            <rect x="462" y="106" width="14" height="114"></rect>
+            <rect x="486" y="84" width="14" height="136"></rect>
+            <rect x="510" y="124" width="14" height="96"></rect>
+            <rect x="534" y="98" width="14" height="122"></rect>
+            <rect x="558" y="68" width="14" height="152"></rect>
+            <rect x="582" y="80" width="14" height="140"></rect>
+            <rect x="606" y="46" width="14" height="174" fill="#c14a2b"></rect>
+            <rect x="630" y="60" width="14" height="160" fill="#c14a2b"></rect>
+            <rect x="654" y="92" width="14" height="128"></rect>
+            <rect x="678" y="76" width="14" height="144"></rect>
+            <rect x="702" y="90" width="14" height="130"></rect>
+          </g>
+        </svg>
+        <div class="axis" data-od-id="path-1-1-1-2"><span>MAR 18</span><span>MAR 25</span><span>APR 1</span><span>APR 8</span><span>APR 15</span><span>TODAY</span></div>
+      </section>
+
+      <section class="panel lower-panel" data-od-id="trend">
+        <div class="panel-head" data-od-id="path-1-1-2-0">
+          <h3 data-od-id="path-1-1-2-0-0">match rate — <em>last 12 weeks</em></h3>
+          <div class="meta">STEADY CLIMB FROM 8% → 14%. ATTRIBUTABLE TO ONE COMMUNITY JOIN (FOUNDERS WHO POST, WK 4).</div>
+        </div>
+        <p class="lede">A real climb, not a vibe. <b>One community join</b> moved your match rate more than four months of profile edits — keep posting from that circle, ship more, tweet less.</p>
+      </section>
+    </main>
+  </div>
+
+
+<script data-od-snapshot-bridge="">(function(){
+  var SNAPSHOT_STYLE_PROPS = [
+    'display','position','box-sizing','width','height','min-width','max-width','min-height','max-height',
+    'margin','margin-top','margin-right','margin-bottom','margin-left',
+    'padding','padding-top','padding-right','padding-bottom','padding-left',
+    'border','border-top','border-right','border-bottom','border-left','border-radius',
+    'font','font-family','font-size','font-weight','font-style','line-height','letter-spacing',
+    'color','background-color','opacity','transform','transform-origin','overflow','overflow-x','overflow-y',
+    'white-space','text-align','vertical-align','object-fit','object-position',
+    'flex','flex-direction','flex-wrap','flex-grow','flex-shrink','flex-basis',
+    'grid','grid-template-columns','grid-template-rows','grid-column','grid-row',
+    'gap','row-gap','column-gap','align-items','align-content','align-self',
+    'justify-items','justify-content','justify-self','inset','top','right','bottom','left',
+    'z-index','box-shadow','text-shadow'
+  ];
+  function copyComputedStyle(source, target){
+    if (!source || !target || source.nodeType !== 1 || target.nodeType !== 1) return;
+    var computed = window.getComputedStyle(source);
+    var style = target.getAttribute('style') || '';
+    for (var i = 0; i < SNAPSHOT_STYLE_PROPS.length; i++){
+      var prop = SNAPSHOT_STYLE_PROPS[i];
+      var value = computed.getPropertyValue(prop);
+      if (value) style += prop + ':' + value + ';';
+    }
+    target.setAttribute('style', style);
+  }
+  function syncElementState(source, target){
+    var tag = source.tagName ? source.tagName.toLowerCase() : '';
+    if (tag === 'img' && source.currentSrc) target.setAttribute('src', source.currentSrc);
+    if (tag === 'input' || tag === 'textarea') target.setAttribute('value', source.value || '');
+    if (tag === 'canvas') {
+      try {
+        var img = document.createElement('img');
+        img.setAttribute('src', source.toDataURL('image/png'));
+        img.setAttribute('style', target.getAttribute('style') || '');
+        target.parentNode && target.parentNode.replaceChild(img, target);
+      } catch (_) {}
+    }
+  }
+  function inlineSnapshotStyles(originalRoot, cloneRoot){
+    copyComputedStyle(originalRoot, cloneRoot);
+    syncElementState(originalRoot, cloneRoot);
+    var originals = originalRoot.querySelectorAll('*');
+    var clones = cloneRoot.querySelectorAll('*');
+    var count = Math.min(originals.length, clones.length, 3500);
+    for (var i = 0; i < count; i++){
+      copyComputedStyle(originals[i], clones[i]);
+      syncElementState(originals[i], clones[i]);
+    }
+    var scripts = cloneRoot.querySelectorAll('script');
+    for (var s = scripts.length - 1; s >= 0; s--) scripts[s].remove();
+    var links = cloneRoot.querySelectorAll('link[rel~="stylesheet"], link[rel~="preload"], link[rel~="preconnect"]');
+    for (var l = links.length - 1; l >= 0; l--) links[l].remove();
+    var styles = cloneRoot.querySelectorAll('style');
+    for (var st = 0; st < styles.length; st++) {
+      styles[st].textContent = (styles[st].textContent || '')
+        .replace(/@import[^;]+;/gi, '')
+        .replace(/@font-face\s*\{[^}]*\}/gi, '');
+    }
+  }
+  function waitForImages(){
+    var imgs = Array.prototype.slice.call(document.images || []);
+    return Promise.all(imgs.map(function(img){
+      if (img.complete) return Promise.resolve();
+      return new Promise(function(resolve){
+        img.addEventListener('load', resolve, { once: true });
+        img.addEventListener('error', resolve, { once: true });
+      });
+    }));
+  }
+  function scrollOffset(){
+    var doc = document.documentElement;
+    var body = document.body;
+    return {
+      x: Math.max(window.scrollX || 0, doc ? doc.scrollLeft || 0 : 0, body ? body.scrollLeft || 0 : 0),
+      y: Math.max(window.scrollY || 0, doc ? doc.scrollTop || 0 : 0, body ? body.scrollTop || 0 : 0)
+    };
+  }
+  function escapeAttribute(value){
+    return String(value || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+  }
+  function renderSnapshot(id){
+    var w = Math.max(1, window.innerWidth || document.documentElement.clientWidth || 1);
+    var h = Math.max(1, window.innerHeight || document.documentElement.clientHeight || 1);
+    var dpr = window.devicePixelRatio || 1;
+    var docW = Math.max(w, document.documentElement.scrollWidth || 0, document.body ? document.body.scrollWidth : 0);
+    var docH = Math.max(h, document.documentElement.scrollHeight || 0, document.body ? document.body.scrollHeight : 0);
+    var clone = document.documentElement.cloneNode(true);
+    clone.setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
+    inlineSnapshotStyles(document.documentElement, clone);
+    var scroll = scrollOffset();
+    var cloneBody = clone.querySelector('body');
+    var rootStyle = clone.getAttribute('style') || '';
+    var bodyStyle = cloneBody ? cloneBody.getAttribute('style') || '' : '';
+    var bodyContent = cloneBody ? cloneBody.innerHTML : clone.innerHTML;
+    var wrapperStyle = rootStyle + bodyStyle +
+      'margin:0;position:relative;left:' + (-scroll.x) + 'px;top:' + (-scroll.y) + 'px;' +
+      'width:' + docW + 'px;height:' + docH + 'px;overflow:visible;';
+    var html = '<div xmlns="http://www.w3.org/1999/xhtml" style="' + escapeAttribute(wrapperStyle) + '">' + bodyContent + '</div>';
+    var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + ' ' + h + '">' +
+      '<foreignObject x="0" y="0" width="' + docW + '" height="' + docH + '">' +
+      html +
+      '</foreignObject></svg>';
+    var img = new Image();
+    img.onload = function(){
+      try {
+        var canvas = document.createElement('canvas');
+        canvas.width = Math.max(1, Math.floor(w * dpr));
+        canvas.height = Math.max(1, Math.floor(h * dpr));
+        var ctx = canvas.getContext('2d');
+        if (!ctx) throw new Error('no 2d context');
+        ctx.scale(dpr, dpr);
+        ctx.drawImage(img, 0, 0, w, h);
+        window.parent.postMessage({ type: 'od:snapshot:result', id: id, dataUrl: canvas.toDataURL('image/png'), w: canvas.width, h: canvas.height }, '*');
+      } catch (err) {
+        window.parent.postMessage({ type: 'od:snapshot:result', id: id, error: String(err && err.message || err) }, '*');
+      }
+    };
+    function encodedSvgDataUrl(){
+      var encoded = encodeURIComponent(svg);
+      return 'data:image/svg+xml;charset=utf-8,' + encoded;
+    }
+    img.onerror = function(){
+      window.parent.postMessage({ type: 'od:snapshot:result', id: id, error: 'snapshot image failed' }, '*');
+    };
+    img.src = encodedSvgDataUrl();
+  }
+  window.addEventListener('message', function(ev){
+    var data = ev && ev.data;
+    if (!data || data.type !== 'od:snapshot' || !data.id) return;
+    waitForImages().then(function(){ renderSnapshot(String(data.id)); });
+  });
+})();</script><script data-od-srcdoc-transport-activation="">(function(){
+  window.addEventListener('message', function(ev){
+    var data = ev && ev.data;
+    if (!data || data.type !== 'od:srcdoc-transport-activate' || typeof data.html !== 'string') return;
+    document.open();
+    document.write(data.html);
+    document.close();
+  });
+})();</script></body></html>

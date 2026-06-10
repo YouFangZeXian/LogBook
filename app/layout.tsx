@@ -7,10 +7,33 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { SiteShell } from "@/components/site-shell";
 import { getSearchEntries } from "@/lib/content";
 import { buildMetadata, siteConfig } from "@/lib/site";
-import { Geist } from "next/font/google";
+import { DM_Serif_Display, DM_Serif_Text, IBM_Plex_Mono, Inter } from "next/font/google";
 import { cn } from "@/lib/utils";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const dmSerifDisplay = DM_Serif_Display({
+  weight: ['400'],
+  subsets: ['latin'],
+  variable: '--font-serif-display',
+  style: ['normal', 'italic'],
+});
+
+const dmSerifText = DM_Serif_Text({
+  weight: ['400'],
+  subsets: ['latin'],
+  variable: '--font-serif-body',
+  style: ['normal', 'italic'],
+});
+
+const ibmPlexMono = IBM_Plex_Mono({
+  weight: ['400', '500'],
+  subsets: ['latin'],
+  variable: '--font-mono',
+});
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-sans',
+});
 
 export const metadata: Metadata = {
   ...buildMetadata({
@@ -36,7 +59,13 @@ export default function RootLayout({
   const searchEntries = getSearchEntries();
 
   return (
-    <html lang="zh-CN" className={cn("font-sans", geist.variable)}>
+    <html lang="zh-CN" className={cn(
+      "font-sans",
+      dmSerifDisplay.variable,
+      dmSerifText.variable,
+      ibmPlexMono.variable,
+      inter.variable
+    )}>
       <head>
         <Script
           id="logbook-theme-init"
