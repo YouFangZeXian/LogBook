@@ -37,6 +37,19 @@ export type VoyageSelection = {
 
 type AuthMode = "login" | "register";
 
+export type AdminAccessCheck = {
+  id: string;
+  label: string;
+  status: "ok" | "warning" | "blocked";
+  message: string;
+  detail?: string;
+};
+
+export type AdminAccessStatus = {
+  user: LogbookUser | null;
+  checks: AdminAccessCheck[];
+};
+
 function readJson<T>(key: string, fallback: T): T {
   if (typeof window === "undefined") return fallback;
   try {
@@ -379,6 +392,160 @@ export async function listReviewSubmissions() {
 
   if (error) throw new Error(error.message);
   return data ?? [];
+}
+
+export async function getAdminAccessStatus(): Promise<AdminAccessStatus> {
+  const checks: AdminAccessCheck[] = [];
+  const localUser = getLocalLogbookUser();
+
+  if (!isSupabaseConfigured()) {
+    return {
+      user: localUser,
+      checks: [
+        {
+          id: "supabase-config",
+          label: "Supabase 环境变量",
+          status: "blocked",
+          message: "还没有配置 Supabase URL 或 anon key，后台只能使用本地演示数据。",
+          detail: "在本地 .env.local 和 Cloudflare Pages 环境变量中配置后，重新部署一次。",
+        },
+      ],
+    };
+  }
+
+  const supabase = getSupabaseBrowserClient();
+  if (!supabase) {
+    return {
+      user: localUser,
+      checks: [
+        {
+          id: "supabase-client",
+          label: "Supabase 客户端",
+          status: "blocked",
+          message: "Supabase 客户端没有初始化成功。",
+        },
+      ],
+    };
+  }
+
+  const authResult = await supabase.auth.getUser();
+  const authUser = authResult.data.user;
+
+  if (authResult.error || !authUser?.email) {
+    return {
+      user: localUser,
+      checks: [
+        {
+          id: "auth-session",
+          label: "云端登录",
+          status: "blocked",
+          message: "当前浏览器没有 Supabase 登录会话。",
+          detail: "先在站内登录或注册，再回来检查管理员权限。",
+        },
+      ],
+    };
+  }
+
+  const user = await syncCurrentUserFromCloud();
+  checks.push({
+    id: "auth-session",
+    label: "云端登录",
+    status: "ok",
+    message: `已登录：${authUser.email}`,
+  });
+
+  const profileResult = await supabase
+    .from("profiles")
+    .select("id, email, name, role")
+    .eq("id", authUser.id)
+    .maybeSingle();
+
+  if (profileResult.error) {
+    checks.push({
+      id: "profiles",
+      label: "船员档案 profiles",
+      status: "blocked",
+      message: "无法读取当前账号的 profiles 记录。",
+      detail: profileResult.error.message,
+    });
+  } else {
+    checks.push({
+      id: "profiles",
+      label: "船员档案 profiles",
+      status: profileResult.data ? "ok" : "warning",
+      message: profileResult.data ? "当前账号档案可读取。" : "还没有读取到当前账号档案。",
+      detail: profileResult.data ? `role = ${profileResult.data.role}` : "登录后通常会自动创建档案。",
+    });
+  }
+
+  const role = (profileResult.data?.role ?? user?.role ?? "member") as LogbookUser["role"];
+  const hasAdminAccess = role === "admin" || role === "editor";
+  checks.push({
+    id: "admin-role",
+    label: "后台角色",
+    status: hasAdminAccess ? "ok" : "blocked",
+    message: hasAdminAccess
+      ? `当前角色是 ${role}，可以进入审核和运营后台。`
+      : `当前角色是 ${role ?? "member"}，还不能读取完整后台数据。`,
+    detail: hasAdminAccess
+      ? "admin/editor 都可以读取审核、订阅和转化事件。"
+      : `在 Supabase SQL Editor 执行：update public.profiles set role = 'admin' where email = '${authUser.email.replace(/'/g, "''")}';`,
+  });
+
+  const tableChecks: Array<{
+    id: string;
+    label: string;
+    run: () => Promise<{ error: { message: string } | null }>;
+  }> = [
+    {
+      id: "submissions-read",
+      label: "投稿审核 submissions",
+      run: async () => {
+        const { error } = await supabase.from("submissions").select("id").limit(1);
+        return { error };
+      },
+    },
+    {
+      id: "newsletter-read",
+      label: "邮件订阅 newsletter_signups",
+      run: async () => {
+        const { error } = await supabase.from("newsletter_signups").select("id").limit(1);
+        return { error };
+      },
+    },
+    {
+      id: "conversion-read",
+      label: "转化事件 conversion_events",
+      run: async () => {
+        const { error } = await supabase.from("conversion_events").select("id").limit(1);
+        return { error };
+      },
+    },
+  ];
+
+  for (const check of tableChecks) {
+    const result = await check.run();
+    if (result.error) {
+      checks.push({
+        id: check.id,
+        label: check.label,
+        status: "blocked",
+        message: "查询被数据库拒绝。",
+        detail: result.error.message,
+      });
+      continue;
+    }
+
+    checks.push({
+      id: check.id,
+      label: check.label,
+      status: hasAdminAccess ? "ok" : "warning",
+      message: hasAdminAccess ? "查询可执行，RLS 基础权限已连通。" : "查询可执行，但当前不是 admin/editor，结果可能不完整。",
+      detail: hasAdminAccess ? "如果后台仍为空，说明暂时还没有数据。" : "先提升角色后再检查真实后台数据。",
+    });
+  }
+
+  return { user: user ?? localUser, checks };
 }
 
 export async function updateSubmissionReview(input: {

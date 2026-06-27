@@ -347,7 +347,7 @@ set role = 'admin'
 where email = '你的邮箱';
 ```
 
-之后访问 `/admin/submissions` 即可审核投稿、补充、纠错和问题反馈。
+之后先访问 `/admin/settings` 检查环境变量、登录会话、管理员角色和 RLS 表访问状态；通过后再进入 `/admin/submissions` 审核投稿、补充、纠错和问题反馈。
 
 内容发布的轻量流程：
 

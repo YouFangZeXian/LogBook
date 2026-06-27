@@ -137,6 +137,9 @@ export function AdminDashboard() {
             <Link href="/admin/content" className="btn-secondary w-fit text-sm">
               生成内容草稿 <ArrowUpRight size={14} />
             </Link>
+            <Link href="/admin/settings" className="btn-secondary w-fit text-sm">
+              检查配置状态 <ArrowUpRight size={14} />
+            </Link>
           </div>
         </div>
       </section>

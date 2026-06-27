@@ -94,6 +94,7 @@ export const siteConfig = {
         { href: "/admin", label: "运营后台" },
         { href: "/admin/submissions", label: "审核后台" },
         { href: "/admin/content", label: "内容工作台" },
+        { href: "/admin/settings", label: "配置状态" },
         { href: "/about", label: "关于" },
       ],
     },
