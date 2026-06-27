@@ -402,6 +402,61 @@ export async function updateSubmissionReview(input: {
   if (error) throw new Error(error.message);
 }
 
+export async function listAdminSubmissionsSummary() {
+  const supabase = getSupabaseBrowserClient();
+  if (!supabase) return [];
+
+  const { data, error } = await supabase
+    .from("submissions")
+    .select("id, status, type, created_at")
+    .order("created_at", { ascending: false });
+
+  if (error) throw new Error(error.message);
+  return data ?? [];
+}
+
+export async function listNewsletterSignups(limit = 40) {
+  const supabase = getSupabaseBrowserClient();
+  if (!supabase) {
+    return readJson<Array<{ email: string; channel: string; source: string; createdAt: string }>>(
+      "logbook.newsletter.signups",
+      [],
+    ).slice(0, limit);
+  }
+
+  const { data, error } = await supabase
+    .from("newsletter_signups")
+    .select("id, email, channel, source, created_at")
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (error) throw new Error(error.message);
+  return data ?? [];
+}
+
+export async function listConversionEvents(limit = 80) {
+  const supabase = getSupabaseBrowserClient();
+  if (!supabase) {
+    return readJson<
+      Array<{
+        eventType: string;
+        target: string;
+        metadata?: Record<string, unknown>;
+        createdAt: string;
+      }>
+    >("logbook.conversion.events", []).slice(0, limit);
+  }
+
+  const { data, error } = await supabase
+    .from("conversion_events")
+    .select("id, event_type, target, metadata, created_at")
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (error) throw new Error(error.message);
+  return data ?? [];
+}
+
 export async function trackConversionEvent(input: {
   eventType: string;
   target: string;
