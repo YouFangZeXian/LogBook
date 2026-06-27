@@ -18,16 +18,14 @@ import {
   getCurrentLogbookUser,
   requestLogbookLogin,
 } from "@/components/auth-dialog";
+import {
+  listMySubmissions,
+  loadProgress,
+  signOutLogbookUser,
+  updateCloudProfile,
+} from "@/lib/cloud-data";
 
 type Submission = { status?: string };
-
-function read<T>(key: string): T[] {
-  try {
-    return JSON.parse(window.localStorage.getItem(key) ?? "[]") as T[];
-  } catch {
-    return [];
-  }
-}
 
 const crewLevels = [
   { level: "登船者", miles: 0, desc: "刚刚踏上甲板，从零开始探索航海日志。" },
@@ -62,11 +60,10 @@ export function CrewProfilePage() {
       setUserName(u?.name ?? "");
       setUserEmail(u?.email ?? "");
       setEditName(u?.name ?? "");
-      setSubs(read<Submission>("logbook.submissions"));
-      setProg([
-        ...read<string>("logbook.voyage.progress"),
-        ...read<string>("logbook.routes.progress"),
-      ]);
+      void listMySubmissions().then(setSubs);
+      void Promise.all([loadProgress("voyage"), loadProgress("routes")]).then(([voyage, routes]) => {
+        setProg([...voyage, ...routes]);
+      });
       setLanguage(window.localStorage.getItem(LANG_KEY) ?? "zh-CN");
     };
     sync();
@@ -100,18 +97,20 @@ export function CrewProfilePage() {
     return { accepted, miles, level, nextLevel };
   }, [prog.length, subs, userName]);
 
-  const saveName = () => {
+  const saveName = async () => {
     const current = getCurrentLogbookUser();
     if (!current) return;
     const updated = { ...current, name: editName.trim() || current.name };
     window.localStorage.setItem("logbook.auth.user", JSON.stringify(updated));
+    await updateCloudProfile({ name: updated.name });
     window.dispatchEvent(new Event("logbook-auth-changed"));
     setNameSaved(true);
     setTimeout(() => setNameSaved(false), 2000);
   };
 
-  const saveLanguage = () => {
+  const saveLanguage = async () => {
     window.localStorage.setItem(LANG_KEY, language);
+    await updateCloudProfile({ language });
     setLangSaved(true);
     setTimeout(() => setLangSaved(false), 2000);
   };
@@ -126,9 +125,8 @@ export function CrewProfilePage() {
     router.push("/");
   };
 
-  const logout = () => {
-    window.localStorage.removeItem("logbook.auth.user");
-    window.dispatchEvent(new Event("logbook-auth-changed"));
+  const logout = async () => {
+    await signOutLogbookUser();
     router.push("/");
   };
 

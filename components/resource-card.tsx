@@ -1,11 +1,16 @@
-import Link from "next/link";
+"use client";
+
 import { ArrowUpRight } from "@phosphor-icons/react/dist/ssr";
 import { BrandMark } from "@/components/brand-mark";
+import { ConversionLink } from "@/components/conversion-link";
 import type { ResourceItem } from "@/data/resources";
 
 type ResourceCardProps = { item: ResourceItem };
 
 export function ResourceCard({ item }: ResourceCardProps) {
+  const href = item.affiliateLink?.trim() || item.href;
+  const isAffiliate = Boolean(item.affiliateLink?.trim());
+
   return (
     <article className="surface group flex h-full flex-col p-5">
       <span className="tag w-fit">
@@ -23,9 +28,15 @@ export function ResourceCard({ item }: ResourceCardProps) {
         <div><dt className="font-medium text-foreground">风险提示</dt><dd className="text-muted">{item.risk}</dd></div>
       </dl>
       <div className="mt-auto pt-5">
-        <Link href={item.href} className="btn-mist text-sm">
+        <ConversionLink
+          href={href}
+          className="btn-mist text-sm"
+          eventType={isAffiliate ? "affiliate_click" : "resource_click"}
+          target={item.name}
+          metadata={{ category: item.category, href }}
+        >
           {item.buttonLabel} <ArrowUpRight size={14} />
-        </Link>
+        </ConversionLink>
       </div>
     </article>
   );

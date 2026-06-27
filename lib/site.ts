@@ -42,8 +42,8 @@ export const siteConfig = {
     "ChatGPT、Claude、Cursor、美区 Apple ID、海外支付、订阅避坑，一站式整理，帮学生和个人开发者少踩坑、少花冤枉钱。",
   url: siteUrl,
   author: "路格舶",
-  email: "hello@example.com",
-  wechatPlaceholder: "微信联系位（待补充）",
+  email: process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "hello@logbook.today",
+  wechatPlaceholder: process.env.NEXT_PUBLIC_WECHAT_ID ?? "logbook-today",
   keywords: [
     "AI出海",
     "ChatGPT Plus",
@@ -91,6 +91,7 @@ export const siteConfig = {
       items: [
         { href: "/contribute", label: "投稿" },
         { href: "/crew", label: "船员" },
+        { href: "/admin/submissions", label: "审核后台" },
         { href: "/about", label: "关于" },
       ],
     },

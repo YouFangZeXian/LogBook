@@ -1,11 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { ArrowUpRight, CheckCircle, Circle, Compass } from "@phosphor-icons/react/dist/ssr";
 import { BrandMark } from "@/components/brand-mark";
 import { requestLogbookLogin } from "@/components/auth-dialog";
-import { androidBrandOptions, buildRouteRecommendations, statusOptions, type AndroidBrandId, type DeviceId, type RouteRecommendation, type StatusId, type VoyageTask } from "@/lib/voyage-system";
+import { loadProgress, loadVoyageSelection, saveProgress } from "@/lib/cloud-data";
+import { buildRouteRecommendations, type AndroidBrandId, type DeviceId, type RouteRecommendation, type StatusId, type VoyageTask } from "@/lib/voyage-system";
 
 const SELECTION_KEY = "logbook.voyage.selection";
 const ROUTE_PROGRESS_KEY = "logbook.routes.progress";
@@ -24,14 +25,27 @@ export function RouteCenter() {
   const [selection] = useState<StoredSelection>(() => readSelection());
   const [activeRouteId, setActiveRouteId] = useState("");
   const [progress, setProgress] = useState<string[]>(() => readProgress());
+  const [cloudSelection, setCloudSelection] = useState<StoredSelection | null>(null);
 
-  const routes = useMemo(() => buildRouteRecommendations(selection.devices, selection.status, selection.androidBrand), [selection]);
+  useEffect(() => {
+    void loadVoyageSelection().then((next) => {
+      setCloudSelection(next as StoredSelection);
+    });
+    void loadProgress("routes").then(setProgress);
+  }, []);
+
+  const effectiveSelection = cloudSelection ?? selection;
+  const routes = useMemo(() => buildRouteRecommendations(effectiveSelection.devices, effectiveSelection.status, effectiveSelection.androidBrand), [effectiveSelection]);
   const activeRoute = routes.find((r) => r.id === activeRouteId) ?? routes[0];
   const activeTasks = activeRoute.segments.flatMap((s) => s.tasks);
   const activeProgress = activeTasks.length ? Math.round((progress.filter((id) => activeTasks.some((t) => taskKey(activeRoute, t) === id)).length / activeTasks.length) * 100) : 0;
 
   const toggleTask = (id: string) => {
-    setProgress((c) => { const n = c.includes(id) ? c.filter((x) => x !== id) : [...c, id]; window.localStorage.setItem(ROUTE_PROGRESS_KEY, JSON.stringify(n)); return n; });
+    setProgress((c) => {
+      const n = c.includes(id) ? c.filter((x) => x !== id) : [...c, id];
+      void saveProgress("routes", n);
+      return n;
+    });
   };
 
   return (

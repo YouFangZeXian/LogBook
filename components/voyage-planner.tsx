@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -16,7 +16,7 @@ import {
 } from "@phosphor-icons/react/dist/ssr";
 
 import { BrandMark } from "@/components/brand-mark";
-import { getCurrentLogbookUser, requestLogbookLogin } from "@/components/auth-dialog";
+import { saveProgress, saveVoyageSelection, loadProgress } from "@/lib/cloud-data";
 import {
   androidBrandOptions,
   buildVoyagePlan,
@@ -32,7 +32,6 @@ type VoyagePlannerProps = {
   mode?: "compact" | "full";
 };
 
-const SELECTION_KEY = "logbook.voyage.selection";
 const PROGRESS_KEY = "logbook.voyage.progress";
 
 const loadingLines = [
@@ -82,6 +81,10 @@ export function VoyagePlanner({ mode = "compact" }: VoyagePlannerProps) {
   const [launching, setLaunching] = useState(false);
   const [loadingIndex, setLoadingIndex] = useState(0);
 
+  useEffect(() => {
+    void loadProgress("voyage").then(setCompleted);
+  }, []);
+
   const hasAndroid = devices.includes("android");
 
   const segments = useMemo(
@@ -102,16 +105,13 @@ export function VoyagePlanner({ mode = "compact" }: VoyagePlannerProps) {
   const toggleComplete = (id: string) => {
     setCompleted((c) => {
       const next = c.includes(id) ? c.filter((x) => x !== id) : [...c, id];
-      window.localStorage.setItem(PROGRESS_KEY, JSON.stringify(next));
+      void saveProgress("voyage", next);
       return next;
     });
   };
 
   const launch = () => {
-    window.localStorage.setItem(
-      SELECTION_KEY,
-      JSON.stringify({ devices, androidBrand: hasAndroid ? androidBrand : undefined, status, updatedAt: new Date().toISOString() }),
-    );
+    void saveVoyageSelection({ devices, androidBrand: hasAndroid ? androidBrand : undefined, status, updatedAt: new Date().toISOString() });
     setLaunching(true);
     setLoadingIndex(Math.floor(Math.random() * loadingLines.length));
     const ticker = window.setInterval(() => setLoadingIndex((i) => (i + 1) % loadingLines.length), 620);

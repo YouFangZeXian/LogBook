@@ -309,3 +309,51 @@ NEXT_PUBLIC_SITE_URL=https://你的正式域名
 - 增加联盟链接管理
 - 增加产品表单收集页
 - 增加内容搜索
+
+## Supabase 后端配置
+
+当前项目已经预留真实后端模式：
+
+- 未配置 Supabase 时：登录、投稿、航线进度继续使用浏览器本地存储，方便本地预览。
+- 配置 Supabase 后：云端登录、航线进度、船员档案、投稿记录、审核后台、订阅承接和转化事件会写入数据库。
+
+### 1. 创建项目和数据表
+
+1. 在 Supabase 新建项目。
+2. 打开 SQL Editor。
+3. 执行 `supabase/schema.sql`。
+4. 在 Authentication 里启用 Email 登录。
+5. 如需 GitHub / Google 登录，在 Authentication Providers 里配置对应 OAuth。
+
+### 2. 配置环境变量
+
+本地新建 `.env.local`，Cloudflare Pages 里也添加同名变量：
+
+```bash
+NEXT_PUBLIC_SITE_URL=https://logbook.today
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+NEXT_PUBLIC_CONTACT_EMAIL=hello@logbook.today
+NEXT_PUBLIC_WECHAT_ID=logbook-today
+```
+
+### 3. 设置管理员
+
+先在网站注册你的账号，然后回到 Supabase SQL Editor 执行：
+
+```sql
+update public.profiles
+set role = 'admin'
+where email = '你的邮箱';
+```
+
+之后访问 `/admin/submissions` 即可审核投稿、补充、纠错和问题反馈。
+
+### 4. 当前云端数据表
+
+- `profiles`：船员档案、邮箱、名称、语言、角色。
+- `route_selections`：用户选择的设备和当前状态。
+- `voyage_progress`：航线步骤完成状态。
+- `submissions`：投稿、补充、纠错、提问和审核状态。
+- `newsletter_signups`：邮件订阅承接。
+- `conversion_events`：资源点击、产品兴趣、订阅等基础转化埋点。
