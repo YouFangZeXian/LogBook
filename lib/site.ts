@@ -93,6 +93,7 @@ export const siteConfig = {
         { href: "/crew", label: "船员" },
         { href: "/admin", label: "运营后台" },
         { href: "/admin/submissions", label: "审核后台" },
+        { href: "/admin/content", label: "内容工作台" },
         { href: "/about", label: "关于" },
       ],
     },

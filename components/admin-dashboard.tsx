@@ -130,9 +130,14 @@ export function AdminDashboard() {
               汇总投稿审核、邮件订阅和转化事件。它不是复杂 CMS，先把最小运营闭环跑起来。
             </p>
           </div>
-          <Link href="/admin/submissions" className="btn-primary w-fit text-sm">
-            进入投稿审核 <ArrowUpRight size={14} />
-          </Link>
+          <div className="flex flex-wrap gap-2">
+            <Link href="/admin/submissions" className="btn-primary w-fit text-sm">
+              进入投稿审核 <ArrowUpRight size={14} />
+            </Link>
+            <Link href="/admin/content" className="btn-secondary w-fit text-sm">
+              生成内容草稿 <ArrowUpRight size={14} />
+            </Link>
+          </div>
         </div>
       </section>
 

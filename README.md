@@ -349,6 +349,14 @@ where email = '你的邮箱';
 
 之后访问 `/admin/submissions` 即可审核投稿、补充、纠错和问题反馈。
 
+内容发布的轻量流程：
+
+1. 在 `/admin/submissions` 把可用投稿标记为 `accepted`。
+2. 进入 `/admin/content`，选择已采纳投稿。
+3. 编辑标题、英文 slug、分类、标签和 SEO 描述。
+4. 复制或下载生成的 `.mdx` 草稿。
+5. 把草稿放入 `content/articles/` 后提交 Git，即可进入正式内容库。
+
 ### 4. 当前云端数据表
 
 - `profiles`：船员档案、邮箱、名称、语言、角色。
